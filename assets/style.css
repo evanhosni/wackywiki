@@ -1,3 +1,90 @@
+:root {
+    --light: seashell;
+}
+
 * {
-    background: salmon;
+    margin: 0;
+    font-family: Gluten, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+body {
+    background-image: linear-gradient(to right, purple, tomato);
+    overflow: hidden;
+}
+
+main {
+    display: flex;
+}
+
+/*-------------------------LEFT DIV-------------------------*/
+#left-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 250px;
+    height: 100vh;
+    border-right: var(--light) solid 0px;
+    box-shadow: 2px 0px 10px black;
+    overflow-y: auto;
+}
+#title {
+    max-height: 100vh;
+    fill: var(--light);
+    text-shadow: black 0px 4px 8px;
+    font-size: xx-large;
+    overflow: hidden;
+}
+path {
+    fill: transparent;
+}
+#form {
+    padding: 25px;
+    line-height: 1.2;
+}
+#form input {
+    width: 90%;
+    font-size: larger;
+}
+#buttons {
+    padding: 25px;
+}
+#submit {
+    padding: 5px 10px;
+    font-size: larger;
+    font-weight: bolder;
+}
+#collapse {
+    margin-left: 15px;
+    padding: 5px 10px;
+    background: transparent;
+    font-size: larger;
+    font-weight: bolder;
+}
+#erase {
+    padding: 5px 10px;
+    background: transparent;
+    font-size: larger;
+    font-weight: bolder;
+}
+
+
+/*-------------------------RIGHT DIV-------------------------*/
+#right-div {
+    padding: 40px;
+    max-width: 75vw;
+    height: 100vh;
+    overflow-y: auto;
+}
+#text-to-speech {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 25px;
+    padding: 0 10px 0 7px;
+    font-size: larger;
+    font-weight: bolder;
 }
