@@ -25,6 +25,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 500px;
     min-width: 250px;
     height: 100vh;
     border-right: var(--light) solid 0px;
@@ -71,6 +72,12 @@ path {
     font-weight: bolder;
 }
 
+@media screen and (min-width: 999px) {
+    #collapse {
+        visibility: hidden;
+    }
+}
+
 
 /*-------------------------RIGHT DIV-------------------------*/
 #right-div {
@@ -78,6 +85,9 @@ path {
     max-width: 75vw;
     height: 100vh;
     overflow-y: auto;
+}
+#article {
+    padding-bottom: 120px;
 }
 #text-to-speech {
     position: absolute;
