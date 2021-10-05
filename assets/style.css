@@ -4,6 +4,7 @@
 
 * {
     margin: 0;
+    padding: 0;
     font-family: Gluten, sans-serif;
 }
 
@@ -25,14 +26,14 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 500px;
+    width: 550px;
     min-width: 250px;
     height: 100vh;
     border-right: var(--light) solid 0px;
     box-shadow: 2px 0px 10px black;
     overflow-y: auto;
 }
-#title {
+#left-header {
     max-height: 100vh;
     fill: var(--light);
     text-shadow: black 0px 4px 8px;
@@ -45,48 +46,71 @@ path {
 #form {
     padding: 25px;
     line-height: 1.2;
+    min-width: 230px;
+}
+#form p {
+    opacity: 75%;
+    font-size: 14px;
 }
 #form input {
     width: 90%;
     font-size: larger;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    text-align: center;
+}
+.input-item {
+    margin: 1px;
+    padding: 2px 3px 0px;
+    background: gray;
+    border-radius: 4px;
+}
+.input-item:hover {
+    opacity: 50%;
 }
 #buttons {
-    padding: 25px;
+    padding: 20px;
+    min-width: 200px;
 }
 #submit {
-    padding: 5px 10px;
+    margin: 5px;
+    padding: 6px 10px 4px;
     font-size: larger;
     font-weight: bolder;
+    box-shadow: white 0 0 15px;
+    border-radius: 10px;
 }
-#collapse {
-    margin-left: 15px;
-    padding: 5px 10px;
-    background: transparent;
-    font-size: larger;
-    font-weight: bolder;
+#submit:hover {
+    box-shadow: gold 0 0 15px;
 }
 #erase {
-    padding: 5px 10px;
+    margin: 5px;
+    padding: 6px 10px 4px;
     background: transparent;
     font-size: larger;
     font-weight: bolder;
+    border-radius: 10px;
 }
-
-@media screen and (min-width: 999px) {
-    #collapse {
-        visibility: hidden;
-    }
+/*-------------------------COLLAPSE BUTTON-------------------------*/
+#collapse {
+    height: 25px;
+    padding: 4px;
+    background: purple;
+    border-bottom-right-radius: 8px;
+    opacity: 75%;
 }
-
 
 /*-------------------------RIGHT DIV-------------------------*/
 #right-div {
-    padding: 40px;
-    max-width: 75vw;
+    padding: 40px 5vw;
     height: 100vh;
     overflow-y: auto;
 }
+#right-header {
+    height: 100px;
+}
 #article {
+    max-width: 60vw;
     padding-bottom: 120px;
 }
 #text-to-speech {
@@ -94,7 +118,38 @@ path {
     bottom: 0;
     right: 0;
     margin: 25px;
-    padding: 0 10px 0 7px;
+    padding: 6px 10px 4px 7px;
     font-size: larger;
     font-weight: bolder;
+    border-radius: 10px;
 }
+
+/*-------------------------EYES-------------------------*/
+/* .move-area{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    padding: 10% 45%;
+    pointer-events: auto;
+  }
+  .container {
+    width: 100%;
+  }
+  .eye {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    background: #CCC;
+  }
+  .eye:after {
+    position: absolute;
+    bottom: 17px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    background: #000;
+    border-radius: 50%;
+    content: " ";
+  } */
