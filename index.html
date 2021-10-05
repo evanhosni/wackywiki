@@ -5,15 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacky-Wiki</title>
-    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gluten">
+    <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
 
     <main>
+        <!-- EYES
+        <section class="move-area">
+            <div class='.container'>
+              <div class='eye'></div>
+              <div class='eye'></div>
+            </div>
+        </section> -->
+
         <div id='left-div'>
             <div>
-                <div id='title'>
+                <div id='left-header'>
                     <svg viewBox='0 15 205 69'>
                         <path id='curve' d='M 25 80 Q 95 10 180 80' />
                         <text width='500'>
@@ -24,59 +33,59 @@
                     </svg>
                 </div>
 
-                <div id="form">
+                <div id='form'>
                     <h2>• Choose a wiki article!</h2>
-                    <input type="text" name="" id="">
+                    <p>https://en.wikipedia.org/wiki/</p>
+                    <!-- display status of webpage after user types it in -->
+                    <input type='text' name='' id='article-input'>
                     <br><br>
 
                     <h2>• Type in some nouns!</h2>
-                    <input type="text" name="" id="">
-                    <div id="noun-list"></div>
+                    <input type='text' name='' id='noun-input'>
+                    <div id='noun-list'></div>
                     <br>
 
-                    <h2>• How about some adjectives!</h2>
-                    <input type="text" name="" id="">
-                    <div id="adjective-list"></div>
+                    <h2>• Throw in some adjectives!</h2>
+                    <input type='text' name='' id='adjective-input'>
+                    <div id='adjective-list'></div>
                     <br>
 
                     <h2>• Maybe some adverbs!</h2>
-                    <input type="text" name="" id="">
-                    <div id="adverb-list"></div>
+                    <input type='text' name='' id='adverb-input'>
+                    <div id='adverb-list'></div>
                     <br>
 
                     <h2>• Time for some verbs!</h2>
-                    <input type="text" name="" id="">
-                    <div id="verb-list"></div>
+                    <input type='text' name='' id='verb-input'>
+                    <div id='verb-list'></div>
                     <br>
                     
                     <h2>• Don't forget past-tense!</h2>
-                    <input type="text" name="" id="">
-                    <div id="past-tense-verb-list"></div>
+                    <input type='text' name='' id='past-tense-verb-input'>
+                    <div id='past-tense-verb-list'></div>
                 </div>
             </div>
 
-            <div id="buttons">
+            <div id='buttons'>
                 <button id='submit'>Get Wacky!</button>
-                <button id='collapse'><<</button><br><br>
                 <button id='erase'>Erase Everything</button>
             </div>
         </div>
 
+        <button id='collapse'><<</button>
+
         <div id='right-div'>
-            <div id='article'>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
+            <div id='right-header'>
+
             </div>
             
+            <div id='article'></div>
+
             <button id='text-to-speech'>🔊 Let's Hear It!</button>
         </div>
     </main>
 
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src="./assets/script.js"></script>
 </body>
 </html>
