@@ -5,16 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacky-Wiki</title>
-    <link rel="stylesheet" href="./assets/style.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gluten">
+    <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
 
     <main>
+
         <div id='left-div'>
             <div>
-                <div id='title'>
+                <div id='left-header'>
                     <svg viewBox='0 15 205 69'>
                         <path id='curve' d='M 25 80 Q 95 10 180 80' />
                         <text width='500'>
@@ -24,90 +26,89 @@
                         </text>
                     </svg>
                 </div>
-
-                <div id="form">
-                    <h2>• Choose a wiki article!</h2>
-                    <fieldset>
-                        <label for="speed">Select an Article</label>
-                        <select name="speed" id="speed">
-                          <option id="">1960 U.S Presidential Election</option>
-                          <option id="">Bill Clinton</option>
-                          <option>Coca-Cola</option>
-                          <option>Conditional Probability</option>
-                          <option>Firefly</option>
-                          <option>Florida</option>
-                          <option>Food</option>
-                          <option>Qui-Gon Jinn</option>
-                          <option>HIV</option>
-                          <option>Magnificat</option>
-                          <option>Manatee</option>
-                          <option>Mickey Mouse</option>
-                          <option>New York</option>
-                          <option>Oregon Trail</option>
-                          <option>Pope</option>
-                          <option>Seattle</option>
-                          <option>Soft Drink</option>
-                          <option>Theocentricism</option>
-                          <option>Undergarmet</option>
-                          <option>Zorro</option>
-                        </select>
-                    </fieldset>
+                <div id='form'>
+                    <h2>• Choose a topic!</h2>
+                    <!-- display status of webpage after user types it in -->
+                    <input type='text' name='' id='article-input'>
                     <br><br>
 
                     <h2>• Type in some nouns!</h2>
-                    <input type="text" name="" id="">
-                    <div id="noun-list"></div>
+                    <input type='text' name='' id='noun-input'>
+                    <div id='noun-list'></div>
                     <br>
 
-                    <h2>• How about some adjectives!</h2>
-                    <input type="text" name="" id="">
-                    <div id="adjective-list"></div>
+                    <h2>• Throw in some adjectives!</h2>
+                    <input type='text' name='' id='adjective-input'>
+                    <div id='adjective-list'></div>
                     <br>
 
                     <h2>• Maybe some adverbs!</h2>
-                    <input type="text" name="" id="">
-                    <div id="adverb-list"></div>
+                    <input type='text' name='' id='adverb-input'>
+                    <div id='adverb-list'></div>
                     <br>
 
                     <h2>• Time for some verbs!</h2>
-                    <input type="text" name="" id="">
-                    <div id="verb-list"></div>
+                    <input type='text' name='' id='verb-input'>
+                    <div id='verb-list'></div>
                     <br>
                     
                     <h2>• Don't forget past-tense!</h2>
-                    <input type="text" name="" id="">
-                    <div id="past-tense-verb-list"></div>
+                    <input type='text' name='' id='past-tense-verb-input'>
+                    <div id='past-tense-verb-list'></div>
                 </div>
             </div>
 
-            <div id="buttons">
+            <div id='buttons'>
                 <button id='submit'>Get Wacky!</button>
-                <button id='collapse'><<</button><br><br>
                 <button id='erase'>Erase Everything</button>
             </div>
         </div>
 
+        <button id='collapse'><<</button>
+
         <div id='right-div'>
+            <div id='right-header'>
+
+            </div>
+            
             <div id='article'>
                 <div id="tabs">
-                    <ul>
+                    <!-- <ul>
                       <li><a href="#tabs-1">Wacky</a></li>
                       <li><a href="#tabs-2">OG Wiki</a></li>
-                    </ul>
+                    </ul> -->
                     <div id="tabs-1">
                       <h2 id="wacky-wiki"></h2>
                       <p id="wacky-content"></p>
                     </div>
-                    <div id="tabs-2">
+                    <!-- <div id="tabs-2">
                         <h2 id="wiki-title"></h2>
                         <p id="wiki-content"></p>
-                    </div>
-                  </div>
+                    </div> -->
+                </div>
             </div>
-            
-            <button id='text-to-speech'>🔊 Let's Hear It!</button>
+
+            <div id='tts'>
+                <div>
+                    <div>
+                        <select></select>
+                    </div>
+                    <label for="rate">Rate</label><input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
+                    <div class="clearfix"></div>
+                </div>
+                <div>
+                    <label for="pitch">Pitch</label><input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
+                    <div class="clearfix"></div>
+                </div>
+                <div>
+                    <button id='play' type="submit">🔊 Let's Hear It!</button>
+                </div>
+            </div>
         </div>
     </main>
+    <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+    <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="./assets/script.js"></script>
