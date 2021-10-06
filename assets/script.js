@@ -124,6 +124,7 @@ $('#erase').click(function () {
     $('#verb-list').empty()
     $('#past-tense-verb-list').empty()
 })
+
 /*-------------------------COLLAPSE-------------------------*/
 var collapsed = false
 $('#collapse').click(function() {
@@ -169,40 +170,6 @@ function preSearch() {
 //     console.log(data)
 // })
 
-function wikiSearch() {
-    
-    //Create a new object to interact with the server
-    var xhr = new XMLHttpRequest();
-    
-    // Provide 3 arguments (GET/POST, The URL, Async True/False)
-    xhr.open('GET', url, true);
-    
-    // Once request has loaded...
-    xhr.onload = function() {
-        // Parse the request into JSON and set it to the "data" variable 
-        var data = JSON.parse(this.response);
-        
-        // set the page ID to a variable and use that var to extract the title & text content from the page
-        var pageID = Object.keys(data.query.pages)[0];
-        var extract = data.query.pages[pageID].extract;
-        var title = data.query.pages[pageID].title;
-
-        console.log(extract)
-        
-        //convert the text content into a string
-        // var articleString = JSON.stringify(extract);
-        
-        //display the original article content on the page in the Original tab
-        $("#wiki-content").text(extract)
-        $('#wiki-title').text(title)
-        
-        // wordAPI(articleString)
-        
-    }
-    // Send request to the server asynchronously
-    xhr.send();
-    
-}
 
 
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
@@ -238,11 +205,13 @@ function wikiSearch() {
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
 
+
     }
     // Send request to the server asynchronously
     xhr.send();
 
 }
+
 
 //create API functions from CDN to use in browser
 let wordpos = new WordPOS({
@@ -356,33 +325,6 @@ function wordAPI(article) {
 }
 
 
-//shuffle arrays so that a random word is selected every time
-function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-}
-
-
-//jquery UI tab function
-$(function () {
-    $("#tabs").tabs();
-});
-
-
-
 
 
 /*-------------------------TEXT TO SPEECH-------------------------*/
@@ -455,24 +397,51 @@ function speak(){
     }
 }
 
-// inputForm.onsubmit = function(event) {
-//     event.preventDefault();
-//     speak();
-//     inputTxt.blur();
-// }
+
+
+
 
 pitch.onchange = function() {
     pitchValue.textContent = pitch.value;
 }
 
+
 rate.onchange = function() {
     rateValue.textContent = rate.value;
+
+
+
+//shuffle arrays so that a random word is selected every time
+function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+
 }
 
 voiceSelect.onchange = function() {
     speak();
 }
 
+
 $('#play').click(function() {
     speak()
 })
+
+//jquery UI tab function
+$(function () {
+    $("#tabs").tabs();
+});
+
