@@ -113,15 +113,26 @@ path {
     max-width: 60vw;
     padding-bottom: 120px;
 }
-#text-to-speech {
+#tts {
+    visibility: hidden;
     position: absolute;
     bottom: 0;
     right: 0;
     margin: 25px;
+    padding: 100px 25px 25px 100px;
+}
+#tts:hover {
+    visibility: visible;
+}
+#tts select {
+    max-width: 150px;
+}
+#tts button {
+    visibility: visible;
     padding: 6px 10px 4px 7px;
+    border-radius: 10px;
     font-size: larger;
     font-weight: bolder;
-    border-radius: 10px;
 }
 
 /*-------------------------EYES-------------------------*/
