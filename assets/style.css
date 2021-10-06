@@ -27,6 +27,7 @@ main {
     flex-direction: column;
     justify-content: space-between;
     width: 550px;
+    max-width: 50vw;
     min-width: 250px;
     height: 100vh;
     border-right: var(--light) solid 0px;
@@ -113,15 +114,26 @@ path {
     max-width: 60vw;
     padding-bottom: 120px;
 }
-#text-to-speech {
+#tts {
+    visibility: hidden;
     position: absolute;
     bottom: 0;
     right: 0;
-    margin: 25px;
+    margin: 16px;
+    padding: 100px 25px 25px 100px;
+}
+#tts:hover {
+    visibility: visible;
+}
+#tts select {
+    max-width: 150px;
+}
+#tts button {
+    visibility: visible;
     padding: 6px 10px 4px 7px;
+    border-radius: 10px;
     font-size: larger;
     font-weight: bolder;
-    border-radius: 10px;
 }
 
 /*-------------------------EYES-------------------------*/

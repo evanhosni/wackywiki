@@ -125,14 +125,55 @@ $('#erase').click(function () {
     $('#past-tense-verb-list').empty()
 })
 
+/*-------------------------COLLAPSE-------------------------*/
+var collapsed = false
+$('#collapse').click(function() {
+    if (collapsed == false) {
+        $('#left-div').css('width','0')
+        $('#left-div').css('min-width','0')
+        $('#collapse').text('>>')
+        collapsed = true
+    } else {
+        $('#left-div').css('width','550px')
+        $('#left-div').css('min-width','250px')
+        $('#collapse').text('<<')
+        collapsed = false
+    }
+})
 
 
-// WIKI API , WORD API , MAKE IT WACKY FUNCTIONS
-var url = "https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=Lollipop";
+// WIKI SEARCH FUNCTION
+var inputTitle
+var newTitle
+var urlKey
+var url
+
+$("#submit").on("click", preSearch)
+
+function preSearch() {
+    inputTitle = $('#article-input').val()
+    fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+    .then(response => response.json())
+    .then(data => {
+        newTitle = data.query.search[0].title
+        var tempArray = newTitle.split(' ')
+        urlKey = tempArray.join('_')
+        console.log('formatted topic for url: ' + urlKey)
+        url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+        wikiSearch()
+    })
+}
+
+// fetch('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=Coca_Cola')
+// .then(response => response.json())
+// .then(data => {
+//     console.log(data)
+// })
+
 
 
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
-$("#submit").on("click", wikiSearch)
+
 
 var articleString;
 
@@ -164,11 +205,13 @@ function wikiSearch() {
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
 
+
     }
     // Send request to the server asynchronously
     xhr.send();
 
 }
+
 
 //create API functions from CDN to use in browser
 let wordpos = new WordPOS({
@@ -282,6 +325,92 @@ function wordAPI(article) {
 }
 
 
+
+
+/*-------------------------TEXT TO SPEECH-------------------------*/
+var synth = window.speechSynthesis;
+
+var inputForm = document.querySelector('form');
+var inputTxt = document.querySelector('.txt');
+var voiceSelect = document.querySelector('select');
+
+var pitch = document.querySelector('#pitch');
+var pitchValue = document.querySelector('.pitch-value');
+var rate = document.querySelector('#rate');
+var rateValue = document.querySelector('.rate-value');
+
+var voices = [];
+
+function populateVoiceList() {
+    voices = synth.getVoices().sort(function (a, b) {
+        const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
+        if ( aname < bname ) return -1;
+        else if ( aname == bname ) return 0;
+        else return +1;
+    });
+    var selectedIndex = voiceSelect.selectedIndex < 0 ? 0 : voiceSelect.selectedIndex;
+    voiceSelect.innerHTML = '';
+    for(i = 0; i < voices.length ; i++) {
+        var option = document.createElement('option');
+        option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+        if(voices[i].default) {
+            option.textContent += ' -- DEFAULT';
+        }
+        option.setAttribute('data-lang', voices[i].lang);
+        option.setAttribute('data-name', voices[i].name);
+        voiceSelect.appendChild(option);
+    }
+    selectedIndex = 19;//do index of microsoft david instead, cleaner
+    voiceSelect.selectedIndex = selectedIndex;
+}
+
+populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+}
+
+function speak(){
+    var article = $('#article').text()
+    console.log(article)
+    if (synth.speaking) {
+        console.error('speechSynthesis.speaking');
+        synth.cancel()//hmmm
+        // SpeechSynthesisUtterance.end(); ability to pause/stop
+    } else if (article !== '') {
+        var utterThis = new SpeechSynthesisUtterance(article);
+        utterThis.onend = function (event) {
+            console.log('SpeechSynthesisUtterance.onend');
+        }
+        utterThis.onerror = function (event) {
+            console.error('SpeechSynthesisUtterance.onerror');
+        }
+        var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+        for(i = 0; i < voices.length ; i++) {
+            if(voices[i].name === selectedOption) {
+                utterThis.voice = voices[i];
+            break;
+            }
+        }
+        utterThis.pitch = pitch.value;
+        utterThis.rate = rate.value;
+        synth.speak(utterThis);
+    }
+}
+
+
+
+
+
+pitch.onchange = function() {
+    pitchValue.textContent = pitch.value;
+}
+
+
+rate.onchange = function() {
+    rateValue.textContent = rate.value;
+
+
+
 //shuffle arrays so that a random word is selected every time
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -299,10 +428,20 @@ function shuffle(array) {
     }
   
     return array;
+
 }
 
+voiceSelect.onchange = function() {
+    speak();
+}
+
+
+$('#play').click(function() {
+    speak()
+})
 
 //jquery UI tab function
 $(function () {
     $("#tabs").tabs();
 });
+

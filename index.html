@@ -6,20 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacky-Wiki</title>
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+
+    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/> -->
+
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gluten">
     <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
 
     <main>
-        <!-- EYES
-        <section class="move-area">
-            <div class='.container'>
-              <div class='eye'></div>
-              <div class='eye'></div>
-            </div>
-        </section> -->
 
         <div id='left-div'>
             <div>
@@ -35,8 +31,7 @@
                 </div>
 
                 <div id='form'>
-                    <h2>• Choose a wiki article!</h2>
-                    <p>https://en.wikipedia.org/wiki/</p>
+                    <h2>• Choose a topic!</h2>
                     <!-- display status of webpage after user types it in -->
                     <input type='text' name='' id='article-input'>
                     <br><br>
@@ -82,22 +77,38 @@
             
             <div id='article'>
                 <div id="tabs">
-                    <ul>
+
+                    <!-- <ul>
                       <li><a href="#tabs-1">Wacky</a></li>
                       <li><a href="#tabs-2">OG Wiki</a></li>
-                    </ul>
-                    <div id="tabs-1">
-                      <h2 id="wacky-wiki"></h2>
-                      <p id="wacky-content"></p>
-                    </div>
-                    <div id="tabs-2">
+                    </ul> -->
+
+                
+
+                    <!-- <div id="tabs-2">
                         <h2 id="wiki-title"></h2>
                         <p id="wiki-content"></p>
-                    </div>
-                  </div>
+                    </div> -->
+                </div>
+
             </div>
 
-            <button id='text-to-speech'>🔊 Let's Hear It!</button>
+            <div id='tts'>
+                <div>
+                    <div>
+                        <select></select>
+                    </div>
+                    <label for="rate">Rate</label><input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
+                    <div class="clearfix"></div>
+                </div>
+                <div>
+                    <label for="pitch">Pitch</label><input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
+                    <div class="clearfix"></div>
+                </div>
+                <div>
+                    <button id='play' type="submit">🔊 Let's Hear It!</button>
+                </div>
+            </div>
         </div>
     </main>
     <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
