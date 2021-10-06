@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacky-Wiki</title>
     <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gluten">
 </head>
 <body>
@@ -26,7 +27,31 @@
 
                 <div id="form">
                     <h2>• Choose a wiki article!</h2>
-                    <input type="text" name="" id="">
+                    <fieldset>
+                        <label for="speed">Select an Article</label>
+                        <select name="speed" id="speed">
+                          <option id="">1960 U.S Presidential Election</option>
+                          <option id="">Bill Clinton</option>
+                          <option>Coca-Cola</option>
+                          <option>Conditional Probability</option>
+                          <option>Firefly</option>
+                          <option>Florida</option>
+                          <option>Food</option>
+                          <option>Qui-Gon Jinn</option>
+                          <option>HIV</option>
+                          <option>Magnificat</option>
+                          <option>Manatee</option>
+                          <option>Mickey Mouse</option>
+                          <option>New York</option>
+                          <option>Oregon Trail</option>
+                          <option>Pope</option>
+                          <option>Seattle</option>
+                          <option>Soft Drink</option>
+                          <option>Theocentricism</option>
+                          <option>Undergarmet</option>
+                          <option>Zorro</option>
+                        </select>
+                    </fieldset>
                     <br><br>
 
                     <h2>• Type in some nouns!</h2>
@@ -64,19 +89,27 @@
 
         <div id='right-div'>
             <div id='article'>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut, doloribus maxime. Minima, quasi cupiditate aperiam reiciendis totam unde atque, est dignissimos voluptatum et libero! Similique quae excepturi corrupti temporibus dolores?</p>
+                <div id="tabs">
+                    <ul>
+                      <li><a href="#tabs-1">Wacky</a></li>
+                      <li><a href="#tabs-2">OG Wiki</a></li>
+                    </ul>
+                    <div id="tabs-1">
+                      <h2 id="wacky-wiki"></h2>
+                      <p id="wacky-content"></p>
+                    </div>
+                    <div id="tabs-2">
+                        <h2 id="wiki-title"></h2>
+                        <p id="wiki-content"></p>
+                    </div>
+                  </div>
             </div>
             
             <button id='text-to-speech'>🔊 Let's Hear It!</button>
         </div>
     </main>
-
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="./assets/script.js"></script>
 </body>
 </html>
