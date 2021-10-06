@@ -150,18 +150,54 @@ var url
 $("#submit").on("click", preSearch)
 
 function preSearch() {
-    inputTitle = $('#article-input').val()
-    fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
-        .then(response => response.json())
-        .then(data => {
-            newTitle = data.query.search[0].title
-            var tempArray = newTitle.split(' ')
-            urlKey = tempArray.join('_')
-            console.log('formatted topic for url: ' + urlKey)
-            url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
-            wikiSearch()
-            storeLast()
-        })
+    var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
+    var adjectiveWarning = $("<p>").text("Please Choose Atleast 3 Adjectives").attr("style", "color:red;background-color:white;");
+    var adverbWarning = $("<p>").text("Please Choose Atleast 3 Adverbs").attr("style", "color:red;background-color:white;");
+    var verbWarning = $("<p>").text("Please Choose Atleast 3 Verbs").attr("style", "color:red;background-color:white;");
+
+    if (inputNouns.length < 3) {
+        $("#noun-warning").empty();
+        $("#noun-warning").append(nounWarning);
+    } else {
+        $("#noun-warning").empty();
+    };
+    if (inputAdjectives.length < 3) {
+        $("#adjective-warning").empty();
+        $("#adjective-warning").append(adjectiveWarning);
+    } else {
+        $("#adjective-warning").empty();
+    }
+    if (inputAdverbs.length < 3) {
+        $("#adverb-warning").empty();
+        $("#adverb-warning").append(adverbWarning);
+    } else {
+        $("#adverb-warning").empty();
+    }
+    if (inputVerbs.length < 3) {
+        $("#verb-warning").empty();
+        $("#verb-warning").append(verbWarning);
+    } else {
+        $("#verb-warning").empty();
+    }
+    if (inputNouns.length >= 3 && inputAdjectives.length >= 3 && inputAdverbs.length >= 3 && inputVerbs.length >= 3) {
+        $("#noun-warning").empty();
+        $("#adjective-warning").empty();
+        $("#adverb-warning").empty();
+        $("#verb-warning").empty();
+
+
+        inputTitle = $('#article-input').val()
+        fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+            .then(response => response.json())
+            .then(data => {
+                newTitle = data.query.search[0].title
+                var tempArray = newTitle.split(' ')
+                urlKey = tempArray.join('_')
+                console.log('formatted topic for url: ' + urlKey)
+                url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+                wikiSearch()
+            })
+    }
 }
 
 
