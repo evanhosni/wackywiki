@@ -126,15 +126,15 @@ $('#erase').click(function () {
 })
 /*-------------------------COLLAPSE-------------------------*/
 var collapsed = false
-$('#collapse').click(function() {
+$('#collapse').click(function () {
     if (collapsed == false) {
-        $('#left-div').css('width','0')
-        $('#left-div').css('min-width','0')
+        $('#left-div').css('width', '0')
+        $('#left-div').css('min-width', '0')
         $('#collapse').text('>>')
         collapsed = true
     } else {
-        $('#left-div').css('width','550px')
-        $('#left-div').css('min-width','250px')
+        $('#left-div').css('width', '550px')
+        $('#left-div').css('min-width', '250px')
         $('#collapse').text('<<')
         collapsed = false
     }
@@ -150,17 +150,54 @@ var url
 $("#submit").on("click", preSearch)
 
 function preSearch() {
-    inputTitle = $('#article-input').val()
-    fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
-    .then(response => response.json())
-    .then(data => {
-        newTitle = data.query.search[0].title
-        var tempArray = newTitle.split(' ')
-        urlKey = tempArray.join('_')
-        console.log('formatted topic for url: ' + urlKey)
-        url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
-        wikiSearch()
-    })
+    var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
+    var adjectiveWarning = $("<p>").text("Please Choose Atleast 3 Adjectives").attr("style", "color:red;background-color:white;");
+    var adverbWarning = $("<p>").text("Please Choose Atleast 2 Adverbs").attr("style", "color:red;background-color:white;");
+    var verbWarning = $("<p>").text("Please Choose Atleast 3 Verbs").attr("style", "color:red;background-color:white;");
+
+    if (inputNouns.length < 3) {
+        $("#noun-warning").empty();
+        $("#noun-warning").append(nounWarning);
+    } else {
+        $("#noun-warning").empty();
+    };
+    if (inputAdjectives.length < 3) {
+        $("#adjective-warning").empty();
+        $("#adjective-warning").append(adjectiveWarning);
+    } else {
+        $("#adjective-warning").empty();
+    }
+    if (inputAdverbs.length < 3) {
+        $("#adverb-warning").empty();
+        $("#adverb-warning").append(adverbWarning);
+    } else {
+        $("#adverb-warning").empty();
+    }
+    if (inputVerbs.length < 3) {
+        $("#verb-warning").empty();
+        $("#verb-warning").append(verbWarning);
+    } else {
+        $("#verb-warning").empty();
+    }
+    if (inputNouns.length >= 3 && inputAdjectives.length >= 3 && inputAdverbs.length >= 3 && inputVerbs.length >= 3) {
+        $("#noun-warning").empty();
+        $("#adjective-warning").empty();
+        $("#adverb-warning").empty();
+        $("#verb-warning").empty();
+
+
+        inputTitle = $('#article-input').val()
+        fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+            .then(response => response.json())
+            .then(data => {
+                newTitle = data.query.search[0].title
+                var tempArray = newTitle.split(' ')
+                urlKey = tempArray.join('_')
+                console.log('formatted topic for url: ' + urlKey)
+                url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+                wikiSearch()
+            })
+    }
 }
 
 
@@ -216,7 +253,7 @@ function wordAPI(article) {
 
     wordpos.getNouns(article)
         .then(res => {
-           articleNouns = res; 
+            articleNouns = res;
 
             shuffle(articleNouns);
             shuffle(inputNouns);
@@ -232,105 +269,105 @@ function wordAPI(article) {
                 }
             }
 
-           var newArticleString = articleArray.join(' ').toString();
-           return newArticleString;
+            var newArticleString = articleArray.join(' ').toString();
+            return newArticleString;
         })
         .then(article => {
             wordpos.getAdjectives(article)
-            .then(res => {
-                articleAdj = res;
-
-                shuffle(articleAdj);
-                shuffle(inputAdjectives);
-
-                var articleArray = article.split(" ");
-
-                for (let i = 0; i < inputAdjectives.length; i++) {
-                    removedAdj = articleAdj[i]
-                    newAdj = inputAdjectives[i];
-                    for (let j = 0; j < inputAdjectives.length; j++) {
-                        x = articleArray.indexOf(removedAdj);
-                        articleArray.splice(x, 1, newAdj)
-                    }
-                }
-
-                var newArticleString = articleArray.join(' ').toString();
-
-                return newArticleString;
-
-            })
-
-            .then(article => {
-                wordpos.getVerbs(article)
                 .then(res => {
-                    articleVerbs = res;
-    
-                    shuffle(articleVerbs);
-                    shuffle(inputVerbs);
-    
+                    articleAdj = res;
+
+                    shuffle(articleAdj);
+                    shuffle(inputAdjectives);
+
                     var articleArray = article.split(" ");
-    
-                    for (let i = 0; i < inputVerbs.length; i++) {
-                        removedVerb = articleVerbs[i]
-                        newVerb = inputVerbs[i];
-                        for (let j = 0; j < inputVerbs.length; j++) {
-                            x = articleArray.indexOf(removedVerb);
-                            articleArray.splice(x, 1, newVerb)
+
+                    for (let i = 0; i < inputAdjectives.length; i++) {
+                        removedAdj = articleAdj[i]
+                        newAdj = inputAdjectives[i];
+                        for (let j = 0; j < inputAdjectives.length; j++) {
+                            x = articleArray.indexOf(removedAdj);
+                            articleArray.splice(x, 1, newAdj)
                         }
                     }
-    
-                    var newArticleString = articleArray.join(' ').toString();
-    
-                    return newArticleString;
-                })
 
+                    var newArticleString = articleArray.join(' ').toString();
+
+                    return newArticleString;
+
+                })
 
                 .then(article => {
-                    wordpos.getAdverbs(article)
-                    .then(res => {
-                        articleAdv = res;
+                    wordpos.getVerbs(article)
+                        .then(res => {
+                            articleVerbs = res;
 
-                        shuffle(articleAdv);
-                        shuffle(inputAdverbs);
+                            shuffle(articleVerbs);
+                            shuffle(inputVerbs);
 
-                        var articleArray = article.split(" ");
+                            var articleArray = article.split(" ");
 
-                        for (let i = 0; i < inputAdverbs.length; i++) {
-                            removedAdverb = articleAdv[i]
-                            newAdverb = inputAdverbs[i];
-                            for (let j = 0; j < inputAdverbs.length; j++) {
-                                x = articleArray.indexOf(removedAdverb);
-                                articleArray.splice(x, 1, newAdverb)
+                            for (let i = 0; i < inputVerbs.length; i++) {
+                                removedVerb = articleVerbs[i]
+                                newVerb = inputVerbs[i];
+                                for (let j = 0; j < inputVerbs.length; j++) {
+                                    x = articleArray.indexOf(removedVerb);
+                                    articleArray.splice(x, 1, newVerb)
+                                }
                             }
-                        }
-        
-                        var newArticleString = articleArray.join(' ').toString();
-        
-                        $("#wacky-content").text(newArticleString)
 
-                    })
+                            var newArticleString = articleArray.join(' ').toString();
+
+                            return newArticleString;
+                        })
+
+
+                        .then(article => {
+                            wordpos.getAdverbs(article)
+                                .then(res => {
+                                    articleAdv = res;
+
+                                    shuffle(articleAdv);
+                                    shuffle(inputAdverbs);
+
+                                    var articleArray = article.split(" ");
+
+                                    for (let i = 0; i < inputAdverbs.length; i++) {
+                                        removedAdverb = articleAdv[i]
+                                        newAdverb = inputAdverbs[i];
+                                        for (let j = 0; j < inputAdverbs.length; j++) {
+                                            x = articleArray.indexOf(removedAdverb);
+                                            articleArray.splice(x, 1, newAdverb)
+                                        }
+                                    }
+
+                                    var newArticleString = articleArray.join(' ').toString();
+
+                                    $("#wacky-content").text(newArticleString)
+
+                                })
+                        })
                 })
-            })
         })
 }
 
 
 //shuffle arrays so that a random word is selected every time
 function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-  
+    let currentIndex = array.length, randomIndex;
+
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
     }
-  
+
     return array;
 }
 
@@ -361,16 +398,16 @@ var voices = [];
 function populateVoiceList() {
     voices = synth.getVoices().sort(function (a, b) {
         const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
-        if ( aname < bname ) return -1;
-        else if ( aname == bname ) return 0;
+        if (aname < bname) return -1;
+        else if (aname == bname) return 0;
         else return +1;
     });
     var selectedIndex = voiceSelect.selectedIndex < 0 ? 0 : voiceSelect.selectedIndex;
     voiceSelect.innerHTML = '';
-    for(i = 0; i < voices.length ; i++) {
+    for (i = 0; i < voices.length; i++) {
         var option = document.createElement('option');
         option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
-        if(voices[i].default) {
+        if (voices[i].default) {
             option.textContent += ' -- DEFAULT';
         }
         option.setAttribute('data-lang', voices[i].lang);
@@ -382,11 +419,11 @@ function populateVoiceList() {
 }
 
 populateVoiceList();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
+if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function speak(){
+function speak() {
     var article = $('#article').text()
     console.log(article)
     if (synth.speaking) {
@@ -402,10 +439,10 @@ function speak(){
             console.error('SpeechSynthesisUtterance.onerror');
         }
         var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
-        for(i = 0; i < voices.length ; i++) {
-            if(voices[i].name === selectedOption) {
+        for (i = 0; i < voices.length; i++) {
+            if (voices[i].name === selectedOption) {
                 utterThis.voice = voices[i];
-            break;
+                break;
             }
         }
         utterThis.pitch = pitch.value;
@@ -420,18 +457,18 @@ function speak(){
 //     inputTxt.blur();
 // }
 
-pitch.onchange = function() {
+pitch.onchange = function () {
     pitchValue.textContent = pitch.value;
 }
 
-rate.onchange = function() {
+rate.onchange = function () {
     rateValue.textContent = rate.value;
 }
 
-voiceSelect.onchange = function() {
+voiceSelect.onchange = function () {
     speak();
 }
 
-$('#play').click(function() {
+$('#play').click(function () {
     speak()
 })
