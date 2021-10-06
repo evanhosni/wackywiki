@@ -152,7 +152,7 @@ $("#submit").on("click", preSearch)
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
     var adjectiveWarning = $("<p>").text("Please Choose Atleast 3 Adjectives").attr("style", "color:red;background-color:white;");
-    var adverbWarning = $("<p>").text("Please Choose Atleast 2 Adverbs").attr("style", "color:red;background-color:white;");
+    var adverbWarning = $("<p>").text("Please Choose Atleast 3 Adverbs").attr("style", "color:red;background-color:white;");
     var verbWarning = $("<p>").text("Please Choose Atleast 3 Verbs").attr("style", "color:red;background-color:white;");
 
     if (inputNouns.length < 3) {
@@ -233,6 +233,7 @@ function wikiSearch() {
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
+        localStorage.setItem("Original", JSON.stringify(articleString));
 
     }
     // Send request to the server asynchronously
@@ -344,6 +345,8 @@ function wordAPI(article) {
                                     var newArticleString = articleArray.join(' ').toString();
 
                                     $("#wacky-content").text(newArticleString)
+                                    localStorage.setItem("wacky", JSON.stringify(newArticleString));
+                                   
 
                                 })
                         })
@@ -472,3 +475,26 @@ voiceSelect.onchange = function () {
 $('#play').click(function () {
     speak()
 })
+
+
+
+
+
+
+//////////// Local Storage ////////////////////////
+
+
+$('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
+$("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
+
+
+function storeLast()
+{
+
+    localStorage.setItem('nouns',inputNouns)
+    localStorage.setItem('adjectives',inputAdjectives)
+    localStorage.setItem('adverbs',inputAdverbs)
+    localStorage.setItem('verbs',inputVerbs)
+
+}
+
