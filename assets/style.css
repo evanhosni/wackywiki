@@ -21,6 +21,12 @@ main {
     display: flex;
 }
 
+/* styling of replaced words */
+span {
+    color: salmon;
+    font-size: large;
+}
+
 /*-------------------------LEFT DIV-------------------------*/
 #left-div {
     display: flex;
