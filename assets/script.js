@@ -124,7 +124,6 @@ $('#erase').click(function () {
     $('#verb-list').empty()
     $('#past-tense-verb-list').empty()
 })
-
 /*-------------------------COLLAPSE-------------------------*/
 var collapsed = false
 $('#collapse').click(function() {
@@ -164,13 +163,6 @@ function preSearch() {
     })
 }
 
-// fetch('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=Coca_Cola')
-// .then(response => response.json())
-// .then(data => {
-//     console.log(data)
-// })
-
-
 
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
 
@@ -205,13 +197,11 @@ function wikiSearch() {
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
 
-
     }
     // Send request to the server asynchronously
     xhr.send();
 
 }
-
 
 //create API functions from CDN to use in browser
 let wordpos = new WordPOS({
@@ -325,6 +315,33 @@ function wordAPI(article) {
 }
 
 
+//shuffle arrays so that a random word is selected every time
+function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+}
+
+
+//jquery UI tab function
+$(function () {
+    $("#tabs").tabs();
+});
+
+
+
 
 
 /*-------------------------TEXT TO SPEECH-------------------------*/
@@ -397,51 +414,24 @@ function speak(){
     }
 }
 
-
-
-
+// inputForm.onsubmit = function(event) {
+//     event.preventDefault();
+//     speak();
+//     inputTxt.blur();
+// }
 
 pitch.onchange = function() {
     pitchValue.textContent = pitch.value;
 }
 
-
 rate.onchange = function() {
     rateValue.textContent = rate.value;
-
-
-
-//shuffle arrays so that a random word is selected every time
-function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-
 }
 
 voiceSelect.onchange = function() {
     speak();
 }
 
-
 $('#play').click(function() {
     speak()
 })
-
-//jquery UI tab function
-$(function () {
-    $("#tabs").tabs();
-});
-
