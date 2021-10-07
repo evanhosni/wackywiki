@@ -1,8 +1,8 @@
 //GLOBAL WORD ARRAY VARIABLES -- INPUT WORD ARRAYS AND PULLED ARTICLE ARRAYS
-var inputNouns = []
-var inputAdjectives = []
-var inputAdverbs = []
-var inputVerbs = []
+var inputNouns = JSON.parse(localStorage.getItem("nouns")) || []
+var inputAdjectives = JSON.parse(localStorage.getItem("adjectives")) || []
+var inputAdverbs = JSON.parse(localStorage.getItem("adverbs")) || []
+var inputVerbs = JSON.parse(localStorage.getItem("verbs")) || []
 var inputPastVerbs = []
 var articleNouns = [];
 var articleAdj = [];
@@ -195,7 +195,12 @@ function preSearch() {
                 urlKey = tempArray.join('_')
                 console.log('formatted topic for url: ' + urlKey)
                 url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
-                wikiSearch()
+                wikiSearch();
+                storeLast();
+            
+
+
+                
             })
     }
 }
@@ -483,18 +488,82 @@ $('#play').click(function () {
 
 //////////// Local Storage ////////////////////////
 
+/////displays stored content on page load////
 
-$('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
-$("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
+$("#past").on("click", pastWacky)
+
+function pastWacky(){
+
+    $('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
+    $("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
+    // $('#noun-list').text(JSON.parse(localStorage.getitem("nouns")));
+    // storedWords();
 
 
-function storeLast()
-{
-
-    localStorage.setItem('nouns',inputNouns)
-    localStorage.setItem('adjectives',inputAdjectives)
-    localStorage.setItem('adverbs',inputAdverbs)
-    localStorage.setItem('verbs',inputVerbs)
 
 }
 
+
+// function storeLast()
+// {
+// /////stores input values on click/////
+//     localStorage.setItem('nouns',JSON.stringify(inputNouns))    
+//     localStorage.setItem('adjectives',JSON.stringify(inputAdjectives))
+//     localStorage.setItem('adverbs',JSON.stringify(inputAdverbs))
+//     localStorage.setItem('verbs',JSON.stringify(inputVerbs))
+
+
+
+// }
+
+
+
+// var nounsStored = JSON.parse(localStorage.getItem("nouns"))
+// var adjectivesStored = JSON.parse(localStorage.getItem("adjectives"))
+// var adverbsStored = JSON.parse(localStorage.getItem("adverbs"))
+// var verbsStored = JSON.parse(localStorage.getItem("verbs"))
+// console.log(nounsStored)
+
+
+// ////stores and displays  input words
+// function storedWords(){
+    
+    
+//     // for(var i=0; i <= nounsStored.length; i++){
+//     //     var storeNouns = document.createElement('button')
+//     //     $(storeNouns).attr('class', 'input-item')
+//     //     $(storeNouns).text(nounsStored[i]);
+   
+//     // }
+    
+//     for(var i=0; i <= adjectivesStored.length; i++){
+//         var storeAdjectives = document.createElement('button')
+//         $(storeAdjectives).attr('class', 'input-item')
+//         $(storeAdjectives).text(adjectivesStored[i]);
+//         $('#adjective-list').append(storeAdjectives)
+       
+        
+//     }
+   
+//     for(var i=0; i <= adverbsStored.length; i++){
+//         var storeAdverbs = document.createElement('button')      
+//         $(storeAdverbs).attr('class', 'input-item')
+//         $(storeAdverbs).text(adverbsStored[i]);
+//         $('#adverb-list').append(storeAdverbs)
+    
+        
+//     }
+    
+//     for(var i=0; i <= verbsStored.length; i++){
+//         var storeVerbs = document.createElement('button')  
+//         $(storeVerbs).attr('class', 'input-item')
+//         $(storeVerbs).text(verbsStored[i]);
+//         $('#verb-list').append(storeVerbs)
+      
+        
+//     }
+    
+
+
+// }
+// // storedWords();
