@@ -1,13 +1,15 @@
 //GLOBAL WORD ARRAY VARIABLES -- INPUT WORD ARRAYS AND PULLED ARTICLE ARRAYS
-var inputNouns = []
-var inputAdjectives = []
-var inputAdverbs = []
-var inputVerbs = []
-var inputPastVerbs = []
+var inputNouns = [];
+var inputAdjectives = [];
+var inputAdverbs = [];
+var inputVerbs = [];
+var inputPastVerbs = [];
 var articleNouns = [];
 var articleAdj = [];
 var articleAdv = [];
 var articleVerbs = [];
+var articleRest = [];
+var articleRepeats = [];
 
 
 // INPUT WORD ARRAY FUNCTIONS -- LEFT SIDE OF PAGE FUNCTIONS 
@@ -25,6 +27,7 @@ $("#noun-input").keyup(function (event) {
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
     }
+
 });
 $('#noun-list').click(function (event) {
     if ($(event.target).is('button')) {
@@ -147,7 +150,10 @@ var newTitle
 var urlKey
 var url
 
-$("#submit").on("click", preSearch)
+$("#submit").on("click", function () {
+    preSearch();
+    $("#article").attr("style", "display:block;");
+})
 
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
@@ -193,12 +199,12 @@ function preSearch() {
                 newTitle = data.query.search[0].title
                 var tempArray = newTitle.split(' ')
                 urlKey = tempArray.join('_')
-                console.log('formatted topic for url: ' + urlKey)
                 url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
                 wikiSearch()
             })
     }
 }
+
 
 
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
@@ -225,7 +231,7 @@ function wikiSearch() {
         var title = data.query.pages[pageID].title;
 
         //convert the text content into a string
-        articleString = JSON.stringify(extract);
+        articleString = extract;
 
         //display the original article content on the page in the Original tab
         $("#wiki-content").text(extract)
@@ -233,6 +239,8 @@ function wikiSearch() {
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
+
+        //save OG article to local storage
         localStorage.setItem("Original", JSON.stringify(articleString));
 
     }
@@ -245,136 +253,105 @@ function wikiSearch() {
 let wordpos = new WordPOS({
     // preload: true,
     dictPath: 'https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dict',
-    profile: true
+    profile: true,
+    preload: true,
+    stopwords: true,
+    debug: true,
 });
 
 
 //call API to pull words from article out of article based on POS
 function wordAPI(article) {
+    // var posResults = {};
+    wordpos.getPOS(article)
+        .then(results => { return results})
+        .then(data => {
+            var posResults = data;
 
-    wordpos.getNouns(article)
-        .then(res => {
-           articleNouns = res; 
+            //split data based on POS
+            articleNouns = posResults.nouns;
+            articleVerbs = posResults.verbs;
+            articleAdj = posResults.adjectives;
+            articleAdv = posResults.adverbs;
+            articleRest = posResults.rest;
 
+            //split article into an array to replace words 
+            //and a holding array to remove replaced words so they are not replaced again 
+            var articleArray = articleString.split(" ");
+            var holdingArray = articleString.split(" ");
+
+            /*----NOUNS----*/
             shuffle(articleNouns);
             shuffle(inputNouns);
 
-            var articleArray = articleString.split(" ");
-            var holdingArray = articleString.split(" ")
+            wordReplace(articleNouns, inputNouns, articleArray, holdingArray);
 
-            for (let i = 0; i < inputNouns.length; i++) {
-                removedNoun = articleNouns[i]
-                newNoun = "<span>"+inputNouns[i]+"</span>";
-                for (let j = 0; j < inputNouns.length; j++) {
-                    x = articleArray.indexOf(removedNoun);
-                    articleArray.splice(x, 1, newNoun)
-                    holdingArray.splice(x, 1)
-                }
-            }
-           var holdingString = holdingArray.join(' ').toString();
-           return [articleArray,holdingString];
+
+            /*----VERBS----*/
+            shuffle(articleVerbs);
+            shuffle(inputVerbs);
+
+            wordReplace(articleVerbs, inputVerbs, articleArray, holdingArray);
+
+
+            /*----ADJECTIVES----*/
+            shuffle(articleAdj);
+            shuffle(inputAdjectives);
+
+            wordReplace(articleAdj, inputAdjectives, articleArray, holdingArray);
+
+            /*----ADVERBS----*/
+            shuffle(articleAdv);
+            shuffle(inputAdverbs)
+
+            wordReplace(articleAdv, inputAdverbs, articleArray, holdingArray);
+
+            /*CONVERT the final article array to a string and display it on the page*/
+            newArticleString = articleArray.join(" ").replace('"', '');
+            //save wacky wiki article to local storage
+            localStorage.setItem("wacky", newArticleString);
+            //display wacky article on the page 
+            $("#wacky-content").html(newArticleString)
         })
-        .then(article => {
-            var articleArray = article[0]
-            var holdingString = article[1]
-            var holdingArray = holdingString.split(" ");
-            wordpos.getAdjectives(holdingString)
-            .then(res => {
-                articleAdj = res;
-
-                shuffle(articleAdj);
-                shuffle(inputAdjectives);
+}
 
 
-                for (let i = 0; i < inputAdjectives.length; i++) {
-                    removedAdj = articleAdj[i]
-                    newAdj = "<span>"+inputAdjectives[i]+"</span>";
-                    for (let j = 0; j < inputAdjectives.length; j++) {
-                        x = articleArray.indexOf(removedAdj);
-                        articleArray.splice(x, 1, newAdj)
-                        holdingArray.splice(x,1)
-                    }
-                }
 
-                var holdingString = holdingArray.join(' ').toString();
-                return [articleArray,holdingString];
+//function to choose a replacement word from input words, replace in the article array, and remove that word (and any repeats of that word) from the holding array so that it cannot be replaced again 
+function wordReplace(articlePOS, inputPOS, articleArray, holdingArray) {
+    for (let i = 0; i < inputPOS.length; i++) {
+        var removedWord = articlePOS[i]
+        var newWord = "<span>" + inputPOS[i] + "</span>";
+        for (let j = 0; j < inputPOS.length; j++) {
+            x = articleArray.indexOf(removedWord);
+            articleArray.splice(x, 1, newWord)
+            holdingArray.splice(x, 1)
+        }
+    }
 
-            })
+    //remove all occurances of the removedWord from the holding array 
+    for (let i = 0; i < holdingArray.length; i++) {
+        if (removedWord === holdingArray[i]) {
+            holdingArray.splice(holdingArray[i], 1)
+        }
+    }
 
-            .then(article => {
-                var articleArray = article[0]
-                var holdingString = article[1]
-                var holdingArray = holdingString.split(" ");
-                wordpos.getVerbs(holdingString)
-                .then(res => {
-                    articleVerbs = res;
-    
-                    shuffle(articleVerbs);
-                    shuffle(inputVerbs);
-    
-    
-                    for (let i = 0; i < inputVerbs.length; i++) {
-                        removedVerb = articleVerbs[i]
-                        newVerb = "<span>"+inputVerbs[i]+"</span>";
-                        for (let j = 0; j < inputVerbs.length; j++) {
-                            x = articleArray.indexOf(removedVerb);
-                            articleArray.splice(x, 1, newVerb)
-                            holdingArray.splice(x,1)
-                        }
-                    }
-    
-                    var holdingString = holdingArray.join(' ').toString();
-                    return [articleArray,holdingString];
-                })
-
-
-                .then(article => {
-                    var articleArray = article[0]
-                    var holdingString = article[1]
-                    wordpos.getAdverbs(holdingString)
-                    .then(res => {
-                        articleAdv = res;
-
-                        shuffle(articleAdv);
-                        shuffle(inputAdverbs);
-
-
-                        for (let i = 0; i < inputAdverbs.length; i++) {
-                            removedAdverb = articleAdv[i]
-                            newAdverb = "<span>"+inputAdverbs[i]+"</span>";
-                            for (let j = 0; j < inputAdverbs.length; j++) {
-                                x = articleArray.indexOf(removedAdverb);
-                                articleArray.splice(x, 1, newAdverb)
-                            }
-                        }
-
-                        newArticleString = articleArray.join(" ").replace('"','')
-        
-                        $("#wacky-content").html(newArticleString)
-
-                    })
-                })
-            })
-        })
+    return holdingArray;
 }
 
 
 //shuffle arrays so that a random word is selected every time
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
-
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
         // And swap it with the current element.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }
-
     return array;
 }
 
@@ -383,6 +360,7 @@ function shuffle(array) {
 $(function () {
     $("#tabs").tabs();
 });
+
 
 
 
@@ -483,22 +461,14 @@ $('#play').click(function () {
 
 
 
+/*-------------------------LOCAL STORAGE-------------------------*/
 
+//past wacky button to pull original/wacky content from local storage 
+$("#past").on("click",pastWacky)
 
-//////////// Local Storage ////////////////////////
-
-
-$('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
-$("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
-
-
-function storeLast()
-{
-
-    localStorage.setItem('nouns',inputNouns)
-    localStorage.setItem('adjectives',inputAdjectives)
-    localStorage.setItem('adverbs',inputAdverbs)
-    localStorage.setItem('verbs',inputVerbs)
-
+//pulls words from local storage when past wacky button is clicked
+function pastWacky() {
+    $('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
+    $("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
 }
 
