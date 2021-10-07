@@ -27,12 +27,15 @@ $("#noun-input").keyup(function (event) {
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
     }
+    localStorage.setItem("nouns", JSON.stringify(inputNouns))
 
 });
 $('#noun-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputNouns.indexOf($(event.target).text())
         inputNouns.splice(i, 1)
+        localStorage.removeItem('nouns')
+        localStorage.setItem("nouns", JSON.stringify(inputNouns))
         $(event.target).remove()
     }
 })
@@ -46,11 +49,14 @@ $("#adjective-input").keyup(function (event) {
         $('#adjective-list').append(newAdjective)
         $('#adjective-input').val('')
     }
+    localStorage.setItem("adj", JSON.stringify(inputAdjectives))
 });
 $('#adjective-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputAdjectives.indexOf($(event.target).text())
         inputAdjectives.splice(i, 1)
+        localStorage.removeItem('adj')
+        localStorage.setItem("adj", JSON.stringify(inputAdjectives))
         $(event.target).remove()
     }
 })
@@ -64,11 +70,14 @@ $("#adverb-input").keyup(function (event) {
         $('#adverb-list').append(newAdverb)
         $('#adverb-input').val('')
     }
+    localStorage.setItem("adv", JSON.stringify(inputAdverbs))
 });
 $('#adverb-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputAdverbs.indexOf($(event.target).text())
         inputAdverbs.splice(i, 1)
+        localStorage.removeItem('adv')
+        localStorage.setItem("adv", JSON.stringify(inputAdverbs))
         $(event.target).remove()
     }
 })
@@ -82,32 +91,19 @@ $("#verb-input").keyup(function (event) {
         $('#verb-list').append(newVerb)
         $('#verb-input').val('')
     }
+    localStorage.setItem("verbs", JSON.stringify(inputVerbs))
 });
 $('#verb-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputVerbs.indexOf($(event.target).text())
         inputVerbs.splice(i, 1)
+        localStorage.removeItem('verbs')
+        localStorage.setItem("verbs", JSON.stringify(inputVerbs))
         $(event.target).remove()
     }
 })
-/*-------------------------PAST-TENSE VERBS-------------------------*/
-$("#past-tense-verb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#past-tense-verb-input').val() != '') {
-        inputPastVerbs.push($('#past-tense-verb-input').val())
-        var newPastTenseVerb = document.createElement('button')
-        $(newPastTenseVerb).attr('class', 'input-item')
-        $(newPastTenseVerb).text($('#past-tense-verb-input').val())
-        $('#past-tense-verb-list').append(newPastTenseVerb)
-        $('#past-tense-verb-input').val('')
-    }
-});
-$('#past-tense-verb-list').click(function (event) {
-    if ($(event.target).is('button')) {
-        var i = inputPastVerbs.indexOf($(event.target).text())
-        inputPastVerbs.splice(i, 1)
-        $(event.target).remove()
-    }
-})
+
+
 /*-------------------------ERASE-------------------------*/
 $('#erase').click(function () {
     nounArray = []
@@ -169,7 +165,6 @@ function check() {
             fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 if (data.query.search.length < 1) {
                     $('#check').text('❌')
                     console.log(inputTitle)
@@ -190,18 +185,6 @@ function check() {
 //when you click the "get wacky" button at the bottom, call preSearch function, which leads to wikiSearch function 
 $("#submit").on("click", preSearch)
 
-// function preSearch() {
-//     inputTitle = $('#article-input').val()
-//     fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
-//     .then(response => response.json())
-//     .then(data => {
-//         newTitle = data.query.search[0].title
-//         var tempArray = newTitle.split(' ')
-//         urlKey = tempArray.join('_')
-//         url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
-//         wikiSearch()
-//     })
-// }
 
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
@@ -301,7 +284,7 @@ function wikiSearch() {
         wordAPI(articleString)
 
         //save OG article to local storage
-        localStorage.setItem("Original", JSON.stringify(articleString));
+        localStorage.setItem("original", JSON.stringify(articleString));
 
     }
     // Send request to the server asynchronously
@@ -393,7 +376,7 @@ function wordAPI(article) {
             /*CONVERT the final article array to a string and display it on the page*/
             newArticleString = articleArray.join(" ").replace('"', '');
             //save wacky wiki article to local storage
-            localStorage.setItem("wacky", newArticleString);
+            localStorage.setItem("wacky", JSON.stringify(newArticleString));
             //display wacky article on the page 
             $("#wacky-content").html(newArticleString)
         })
@@ -579,18 +562,62 @@ $('#close-modal').click(function() {
 })
 
 
-//other TODOs - clean up wackified articles. Remove quotes, backslashes, \n's, etc.
 //maybe add sfx? soooo low priority
 //phone media queries...gonna be pretty yikes
 
 /*-------------------------LOCAL STORAGE-------------------------*/
 
 //past wacky button to pull original/wacky content from local storage 
-$("#past").on("click",pastWacky)
-
 //pulls words from local storage when past wacky button is clicked
-function pastWacky() {
-    $('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
-    $("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
+$("#load").on("click",function(){
+
+    var storedNouns = JSON.parse(localStorage.getItem("nouns"));
+    pullStorage(inputNouns,storedNouns,'#noun-list');
+
+    var storedAdj = JSON.parse(localStorage.getItem("adj"));
+    pullStorage(inputAdjectives,storedAdj, '#adjective-list');
+
+    var storedAdv = JSON.parse(localStorage.getItem("adv"));
+    pullStorage(inputAdverbs,storedAdv, '#adverb-list')
+
+    var storedVerbs = JSON.parse(localStorage.getItem("verbs"))
+    pullStorage(inputVerbs,storedVerbs, '#verb-list');
+
+    pastWacky();
+
+})
+
+function pastWacky(){
+
+    var wacky = JSON.parse(localStorage.getItem("wacky"))
+    var original = JSON.parse(localStorage.getItem("original"))
+
+    if (wacky != null && original != null){
+        $('#wacky-content').html(wacky)
+        $('#wiki-content').text(original)
+        $('#article').css('visibility','visible')
+        $('#tts button').css('visibility','visible')
+        $('#right-header').css('justify-content','space-between')
+        $('#spacer').css('display','block')
+        $('#article-buttons').css('display','block')
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        isWackified = true;
+    } 
 }
 
+function pullStorage(input,stored,id){
+    if (stored === null){
+        return;
+    }
+    else {
+        $(id).empty();
+        for (let i = 0; i < stored.length; i++){
+            input.push(stored[i]);
+            newBtn = $("<button>").attr('class','input-item').text(stored[i])
+            $(id).append(newBtn)
+        }       
+    } 
+}
