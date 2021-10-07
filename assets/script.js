@@ -23,7 +23,7 @@ $("#noun-input").keyup(function (event) {
         inputNouns.push($('#noun-input').val())
         var newNoun = document.createElement('button')
         $(newNoun).attr('class', 'input-item')
-        $(newNoun).text($('#noun-input').val())///add '• ' before each item except first item in each array
+        $(newNoun).text($('#noun-input').val())
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
     }
@@ -150,10 +150,58 @@ var newTitle
 var urlKey
 var url
 
-$("#submit").on("click", function () {
-    preSearch();
-    $("#article").attr("style", "display:block;");
+
+//checks for valid article
+var isChecked
+var checkTimer
+
+$('#article-input').keyup(function(event) {
+    if (event.keyCode !== 13) {
+        $('#check').text('🤔')
+        clearInterval(checkTimer);
+        checkTimer = setInterval(check, 1000);
+    }
 })
+
+function check() {
+        inputTitle = $('#article-input').val()
+        if (inputTitle !== "") {
+            fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data.query.search.length < 1) {
+                    $('#check').text('❌')
+                    console.log(inputTitle)
+                } else {
+                    $('#check').text('✔️')
+                }
+            })
+        } else {
+            $('#check').text('')
+        }
+        clearInterval(checkTimer);
+}
+
+// function stopCheck() {
+
+// }
+
+//when you click the "get wacky" button at the bottom, call preSearch function, which leads to wikiSearch function 
+$("#submit").on("click", preSearch)
+
+// function preSearch() {
+//     inputTitle = $('#article-input').val()
+//     fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+//     .then(response => response.json())
+//     .then(data => {
+//         newTitle = data.query.search[0].title
+//         var tempArray = newTitle.split(' ')
+//         urlKey = tempArray.join('_')
+//         url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+//         wikiSearch()
+//     })
+// }
 
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
@@ -209,8 +257,8 @@ function preSearch() {
 
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
 
-
 var articleString;
+var isWackified
 
 function wikiSearch() {
 
@@ -234,8 +282,20 @@ function wikiSearch() {
         articleString = extract;
 
         //display the original article content on the page in the Original tab
-        $("#wiki-content").text(extract)
+        $('#article').css('visibility','visible')
         $('#wiki-title').text(title)
+        $("#wiki-content").text(extract)
+
+        $('#tts button').css('visibility','visible')
+
+        $('#right-header').css('justify-content','space-between')
+        $('#spacer').css('display','block')
+        $('#article-buttons').css('display','block')
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        isWackified = true;
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
@@ -248,6 +308,30 @@ function wikiSearch() {
     xhr.send();
 
 }
+
+// Wackified and OG Wiki tab button settings below //TODO - make them permanently 'active' instead of focused
+
+$('#wackified-wiki').click(function() {
+    if (!isWackified) {
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        synth.cancel()
+        isWackified = true;
+    }
+})
+
+$('#og-wiki').click(function() {
+    if (isWackified) {
+        $('#og-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#wackified-wiki').css('opacity','100%').css('background','transparent')
+        $("#wiki-content").css('display','block')
+        $("#wacky-content").css('display','none')
+        synth.cancel()
+        isWackified = false;
+    }
+})
 
 //create API functions from CDN to use in browser
 let wordpos = new WordPOS({
@@ -374,9 +458,7 @@ var inputTxt = document.querySelector('.txt');
 var voiceSelect = document.querySelector('select');
 
 var pitch = document.querySelector('#pitch');
-var pitchValue = document.querySelector('.pitch-value');
 var rate = document.querySelector('#rate');
-var rateValue = document.querySelector('.rate-value');
 
 var voices = [];
 
@@ -399,7 +481,7 @@ function populateVoiceList() {
         option.setAttribute('data-name', voices[i].name);
         voiceSelect.appendChild(option);
     }
-    selectedIndex = 19;//do index of microsoft david instead, cleaner
+    selectedIndex = 19;//TODO - do index of microsoft david instead, cleaner...low priority
     voiceSelect.selectedIndex = selectedIndex;
 }
 
@@ -408,14 +490,31 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function speak() {
-    var article = $('#article').text()
+
+var mouthSpeed = 0.6 //note, the higher the value, the slower the movement
+
+rate.onchange = function() {
+    mouthSpeed = (0.5 / rate.value)
+    console.log(mouthSpeed)
+}
+
+function speak(){
+    var article
+    if (isWackified) {
+        article = $('#wacky-content').text()
+    } else {
+        article = $('#wiki-content').text()
+    }
     console.log(article)
     if (synth.speaking) {
-        console.error('speechSynthesis.speaking');
-        synth.cancel()//hmmm
-        // SpeechSynthesisUtterance.end(); ability to pause/stop
-    } else if (article !== '') {
+        synth.cancel()
+        $('.vampi-mouth').css('animation','none')
+        $('#play').text("🔊 Let's Hear It!")
+        /*$('#tts:hover').css('visibility','visible')/*TODO - permanently stays visible, which we dont want*/
+ 
+    } else if (article.trim() !== '') {
+        $('#play').text("🔇 Stop!")
+        // $('#tts:hover').css('visibility','hidden')
         var utterThis = new SpeechSynthesisUtterance(article);
         utterThis.onend = function (event) {
             console.log('SpeechSynthesisUtterance.onend');
@@ -433,33 +532,56 @@ function speak() {
         utterThis.pitch = pitch.value;
         utterThis.rate = rate.value;
         synth.speak(utterThis);
+        $('.vampi-mouth').css('animation','speak forwards infinite ' + mouthSpeed + 's ease-in-out')
+        setInterval(function(){ 
+            if (!synth.speaking) {
+                $('.vampi-mouth').css('animation','none')
+                $('#play').text("🔊 Let's Hear It!")
+                /*$('#tts:hover').css('visibility','visible')*/
+            }
+        }, 100);
     }
 }
 
-// inputForm.onsubmit = function(event) {
-//     event.preventDefault();
-//     speak();
-//     inputTxt.blur();
-// }
-
-pitch.onchange = function () {
-    pitchValue.textContent = pitch.value;
-}
-
-rate.onchange = function () {
-    rateValue.textContent = rate.value;
-}
-
-voiceSelect.onchange = function () {
-    speak();
-}
-
-$('#play').click(function () {
+$('#play').click(function() {
     speak()
 })
 
 
 
+/*-------------------------WACKY WILFRED-------------------------*/
+let ufo = document.querySelector('body');
+
+ufo.addEventListener('mousemove', (e) => {
+  let eyes = document.querySelector('.eyes');
+  let mouseX = (eyes.getBoundingClientRect().left); 
+  let mouseY = (eyes.getBoundingClientRect().top);
+  let radianDegrees = Math.atan2(e.pageX - mouseX, e.pageY - mouseY);
+  let rotationDegrees = (radianDegrees * (180/ Math.PI) * -1) + 180;
+  eyes.style.transform = `rotate(${rotationDegrees}deg)`
+});
+
+
+/*-------------------------WELCOME MODAL-------------------------*/
+var welcomeMessages = [
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I suffer from seasonal depression! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I can't remember the last time my father looked me in the eye! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and my dog ran away last week! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I just lost my job! Anyways, let's get wacky."
+]
+
+$('#welcome-message').text(welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)])
+
+
+$('#close-modal').click(function() {
+    $('#welcome').removeClass('is-active')
+    $('.monster').css('z-index',1)
+})
+
+
+//other TODOs - clean up wackified articles. Remove quotes, backslashes, \n's, etc.
+//maybe add sfx? soooo low priority
+//phone media queries...gonna be pretty yikes
 
 /*-------------------------LOCAL STORAGE-------------------------*/
 

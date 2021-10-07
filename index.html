@@ -5,15 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wacky-Wiki</title>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/> -->
+    <link rel="icon" type="image/png" href="./assets/wilfred.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gluten">
     <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
 
-    <main>
+    <div class="ufo">
+        <div class="monster">
+          <div class="body">
+            <div class="ear"></div>
+            <div class="ear"></div>
+            <div class="vampi-mouth">
+              <div class="vampi-tooth"></div>
+            </div>
+          </div>
+          <div class="eye-lid">
+            <div class="eyes">
+              <div class="eye"></div>
+            </div>
+          </div>
+        </div>
+    </div>
 
+    <main>
         <div id='left-div'>
             <div>
                 <div id='left-header'>
@@ -27,8 +43,7 @@
                     </svg>
                 </div>
                 <div id='form'>
-                    <h2>• Choose a topic!</h2>
-                    <!-- display status of webpage after user types it in -->
+                    <h2>• Choose a topic!<span id='check'></span></h2>
                     <input type='text' name='' id='article-input'>
                     <br><br>
 
@@ -57,14 +72,15 @@
                     <div id='verb-list'></div>
                     <br>
                     
-                    <h2>• Don't forget past-tense!</h2>
+                    <!-- <h2>• Don't forget past-tense!</h2>
                     <input type='text' name='' id='past-tense-verb-input'>
-                    <div id='past-tense-verb-list'></div>
+                    <div id='past-tense-verb-list'></div> -->
                 </div>
             </div>
 
-            <div id='buttons'>
+            <div id='form-buttons'>
                 <button id='submit'>Get Wacky!</button>
+                <button id='load'>⌛</button>
                 <button id='erase'>Erase Everything</button>
             </div>
         </div>
@@ -72,24 +88,23 @@
         <button id='collapse'><<</button>
 
         <div id='right-div'>
-            <div id='right-header'>
 
-            </div>
-            
-            <div id='article'>
-                <div id="tabs">
-                    <h3 id="wiki-title"></h3>
-                    <!-- <ul>
-                      <li><a href="#tabs-1">Wackified</a></li>
-                      <li><a href="#tabs-2">Original Wiki</a></li>
-                    </ul> -->
-                    <div id="tabs-1">
-                      <div id="wacky-content"></div>
+
+            <div>
+                <div id='right-header'>
+                    <div id='spacer'></div>
+                    <h1 id='right-title'>Wacky • Wiki</h1>
+                    <div id='article-buttons'>
+                        <button id='wackified-wiki'>Wackified</button>
+                        <button id='og-wiki'>OG Wiki</button>
                     </div>
-                    <div id="tabs-2">
-                        <p id="wiki-content"></p>
-                    </div>
-                  </div>
+                </div>
+
+                <div id='article'>
+                    <h2 id="wiki-title"></h2>
+                    <p id="wacky-content"></p>
+                    <p id="wiki-content"></p>
+                </div>
             </div>
 
             <div id='tts'>
@@ -97,11 +112,11 @@
                     <div>
                         <select></select>
                     </div>
-                    <label for="rate">Rate</label><input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
+                    <label for="rate">Rate &nbsp</label><input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
                     <div class="clearfix"></div>
                 </div>
                 <div>
-                    <label for="pitch">Pitch</label><input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
+                    <label for="pitch">Pitch </label><input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
                     <div class="clearfix"></div>
                 </div>
                 <div>
@@ -109,7 +124,35 @@
                 </div>
             </div>
         </div>
+
     </main>
+
+    <div id='welcome' class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class='box sb4'>
+
+                    <h1>Hey there, silly goose!</h1>
+                    <p id='welcome-message'></p>
+
+                    <h2>Here's how to play:</h2>
+                    <ol>
+                        <li>Type in any topic</li>
+                        <li>Enter at least 3 of each word type (hit enter after each word)</li>
+                        <li>Click "Get Wacky!" to generate a wacky article</li>
+                        <li>Click "🔊 Let's Hear It!" if you want me to read it aloud to you</li>
+                        <li>Click "⌛" to pick up where you left off</li>
+                    </ol>
+
+                    <p>(Have fun!)</p>
+
+                <button id='close-modal'>Got it!</button>
+            </div>
+        </div>
+    </div>
+
+
+
     <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
     <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
