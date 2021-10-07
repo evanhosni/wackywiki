@@ -152,7 +152,7 @@ $("#submit").on("click", preSearch)
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
     var adjectiveWarning = $("<p>").text("Please Choose Atleast 3 Adjectives").attr("style", "color:red;background-color:white;");
-    var adverbWarning = $("<p>").text("Please Choose Atleast 2 Adverbs").attr("style", "color:red;background-color:white;");
+    var adverbWarning = $("<p>").text("Please Choose Atleast 3 Adverbs").attr("style", "color:red;background-color:white;");
     var verbWarning = $("<p>").text("Please Choose Atleast 3 Verbs").attr("style", "color:red;background-color:white;");
 
     if (inputNouns.length < 3) {
@@ -233,6 +233,7 @@ function wikiSearch() {
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
+        localStorage.setItem("Original", JSON.stringify(articleString));
 
     }
     // Send request to the server asynchronously
@@ -253,101 +254,107 @@ function wordAPI(article) {
 
     wordpos.getNouns(article)
         .then(res => {
-            articleNouns = res;
+           articleNouns = res; 
 
             shuffle(articleNouns);
             shuffle(inputNouns);
 
             var articleArray = articleString.split(" ");
+            var holdingArray = articleString.split(" ")
 
             for (let i = 0; i < inputNouns.length; i++) {
                 removedNoun = articleNouns[i]
-                newNoun = inputNouns[i];
+                newNoun = "<span>"+inputNouns[i]+"</span>";
                 for (let j = 0; j < inputNouns.length; j++) {
                     x = articleArray.indexOf(removedNoun);
                     articleArray.splice(x, 1, newNoun)
+                    holdingArray.splice(x, 1)
                 }
             }
-
-            var newArticleString = articleArray.join(' ').toString();
-            return newArticleString;
+           var holdingString = holdingArray.join(' ').toString();
+           return [articleArray,holdingString];
         })
         .then(article => {
-            wordpos.getAdjectives(article)
+            var articleArray = article[0]
+            var holdingString = article[1]
+            var holdingArray = holdingString.split(" ");
+            wordpos.getAdjectives(holdingString)
+            .then(res => {
+                articleAdj = res;
+
+                shuffle(articleAdj);
+                shuffle(inputAdjectives);
+
+
+                for (let i = 0; i < inputAdjectives.length; i++) {
+                    removedAdj = articleAdj[i]
+                    newAdj = "<span>"+inputAdjectives[i]+"</span>";
+                    for (let j = 0; j < inputAdjectives.length; j++) {
+                        x = articleArray.indexOf(removedAdj);
+                        articleArray.splice(x, 1, newAdj)
+                        holdingArray.splice(x,1)
+                    }
+                }
+
+                var holdingString = holdingArray.join(' ').toString();
+                return [articleArray,holdingString];
+
+            })
+
+            .then(article => {
+                var articleArray = article[0]
+                var holdingString = article[1]
+                var holdingArray = holdingString.split(" ");
+                wordpos.getVerbs(holdingString)
                 .then(res => {
-                    articleAdj = res;
-
-                    shuffle(articleAdj);
-                    shuffle(inputAdjectives);
-
-                    var articleArray = article.split(" ");
-
-                    for (let i = 0; i < inputAdjectives.length; i++) {
-                        removedAdj = articleAdj[i]
-                        newAdj = inputAdjectives[i];
-                        for (let j = 0; j < inputAdjectives.length; j++) {
-                            x = articleArray.indexOf(removedAdj);
-                            articleArray.splice(x, 1, newAdj)
+                    articleVerbs = res;
+    
+                    shuffle(articleVerbs);
+                    shuffle(inputVerbs);
+    
+    
+                    for (let i = 0; i < inputVerbs.length; i++) {
+                        removedVerb = articleVerbs[i]
+                        newVerb = "<span>"+inputVerbs[i]+"</span>";
+                        for (let j = 0; j < inputVerbs.length; j++) {
+                            x = articleArray.indexOf(removedVerb);
+                            articleArray.splice(x, 1, newVerb)
+                            holdingArray.splice(x,1)
                         }
                     }
-
-                    var newArticleString = articleArray.join(' ').toString();
-
-                    return newArticleString;
-
+    
+                    var holdingString = holdingArray.join(' ').toString();
+                    return [articleArray,holdingString];
                 })
+
 
                 .then(article => {
-                    wordpos.getVerbs(article)
-                        .then(res => {
-                            articleVerbs = res;
+                    var articleArray = article[0]
+                    var holdingString = article[1]
+                    wordpos.getAdverbs(holdingString)
+                    .then(res => {
+                        articleAdv = res;
 
-                            shuffle(articleVerbs);
-                            shuffle(inputVerbs);
+                        shuffle(articleAdv);
+                        shuffle(inputAdverbs);
 
-                            var articleArray = article.split(" ");
 
-                            for (let i = 0; i < inputVerbs.length; i++) {
-                                removedVerb = articleVerbs[i]
-                                newVerb = inputVerbs[i];
-                                for (let j = 0; j < inputVerbs.length; j++) {
-                                    x = articleArray.indexOf(removedVerb);
-                                    articleArray.splice(x, 1, newVerb)
-                                }
+                        for (let i = 0; i < inputAdverbs.length; i++) {
+                            removedAdverb = articleAdv[i]
+                            newAdverb = "<span>"+inputAdverbs[i]+"</span>";
+                            for (let j = 0; j < inputAdverbs.length; j++) {
+                                x = articleArray.indexOf(removedAdverb);
+                                articleArray.splice(x, 1, newAdverb)
                             }
+                        }
 
-                            var newArticleString = articleArray.join(' ').toString();
+                        newArticleString = articleArray.join(" ").replace('"','')
+        
+                        $("#wacky-content").html(newArticleString)
 
-                            return newArticleString;
-                        })
-
-
-                        .then(article => {
-                            wordpos.getAdverbs(article)
-                                .then(res => {
-                                    articleAdv = res;
-
-                                    shuffle(articleAdv);
-                                    shuffle(inputAdverbs);
-
-                                    var articleArray = article.split(" ");
-
-                                    for (let i = 0; i < inputAdverbs.length; i++) {
-                                        removedAdverb = articleAdv[i]
-                                        newAdverb = inputAdverbs[i];
-                                        for (let j = 0; j < inputAdverbs.length; j++) {
-                                            x = articleArray.indexOf(removedAdverb);
-                                            articleArray.splice(x, 1, newAdverb)
-                                        }
-                                    }
-
-                                    var newArticleString = articleArray.join(' ').toString();
-
-                                    $("#wacky-content").text(newArticleString)
-
-                                })
-                        })
+                    })
                 })
+            })
         })
 }
 
@@ -472,3 +479,26 @@ voiceSelect.onchange = function () {
 $('#play').click(function () {
     speak()
 })
+
+
+
+
+
+
+//////////// Local Storage ////////////////////////
+
+
+$('#wacky-content').text(JSON.parse(localStorage.getItem("wacky")));
+$("#wiki-content").text(JSON.parse(localStorage.getItem("Original")));
+
+
+function storeLast()
+{
+
+    localStorage.setItem('nouns',inputNouns)
+    localStorage.setItem('adjectives',inputAdjectives)
+    localStorage.setItem('adverbs',inputAdverbs)
+    localStorage.setItem('verbs',inputVerbs)
+
+}
+
