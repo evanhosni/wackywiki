@@ -504,17 +504,18 @@ function pastWacky(){
 }
 
 
-// function storeLast()
-// {
-// /////stores input values on click/////
-//     localStorage.setItem('nouns',JSON.stringify(inputNouns))    
-//     localStorage.setItem('adjectives',JSON.stringify(inputAdjectives))
-//     localStorage.setItem('adverbs',JSON.stringify(inputAdverbs))
-//     localStorage.setItem('verbs',JSON.stringify(inputVerbs))
+function storeLast()
+{
+/////stores input values on click/////
+    
+    localStorage.setItem('nouns',JSON.stringify(inputNouns))    
+    localStorage.setItem('adjectives',JSON.stringify(inputAdjectives))
+    localStorage.setItem('adverbs',JSON.stringify(inputAdverbs))
+    localStorage.setItem('verbs',JSON.stringify(inputVerbs))
 
 
 
-// }
+}
 
 
 
