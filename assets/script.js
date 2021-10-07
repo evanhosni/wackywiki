@@ -30,12 +30,15 @@ $("#noun-input").keyup(function (event) {
             $("#noun-warning").empty();
         };
     }
+    localStorage.setItem("nouns", JSON.stringify(inputNouns))
 
 });
 $('#noun-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputNouns.indexOf($(event.target).text())
         inputNouns.splice(i, 1)
+        localStorage.removeItem('nouns')
+        localStorage.setItem("nouns", JSON.stringify(inputNouns))
         $(event.target).remove()
     }
 })
@@ -52,11 +55,14 @@ $("#adjective-input").keyup(function (event) {
             $("#adjective-warning").empty();
         };
     }
+    localStorage.setItem("adj", JSON.stringify(inputAdjectives))
 });
 $('#adjective-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputAdjectives.indexOf($(event.target).text())
         inputAdjectives.splice(i, 1)
+        localStorage.removeItem('adj')
+        localStorage.setItem("adj", JSON.stringify(inputAdjectives))
         $(event.target).remove()
     }
 })
@@ -73,11 +79,14 @@ $("#adverb-input").keyup(function (event) {
             $("#adverb-warning").empty();
         };
     }
+    localStorage.setItem("adv", JSON.stringify(inputAdverbs))
 });
 $('#adverb-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputAdverbs.indexOf($(event.target).text())
         inputAdverbs.splice(i, 1)
+        localStorage.removeItem('adv')
+        localStorage.setItem("adv", JSON.stringify(inputAdverbs))
         $(event.target).remove()
     }
 })
@@ -94,32 +103,19 @@ $("#verb-input").keyup(function (event) {
             $("#verb-warning").empty();
         };
     }
+    localStorage.setItem("verbs", JSON.stringify(inputVerbs))
 });
 $('#verb-list').click(function (event) {
     if ($(event.target).is('button')) {
         var i = inputVerbs.indexOf($(event.target).text())
         inputVerbs.splice(i, 1)
+        localStorage.removeItem('verbs')
+        localStorage.setItem("verbs", JSON.stringify(inputVerbs))
         $(event.target).remove()
     }
 })
-/*-------------------------PAST-TENSE VERBS-------------------------*/
-// $("#past-tense-verb-input").keyup(function (event) {
-//     if (event.keyCode === 13 && $('#past-tense-verb-input').val().trim() != '') {
-//         inputPastVerbs.push($('#past-tense-verb-input').val())
-//         var newPastTenseVerb = document.createElement('button')
-//         $(newPastTenseVerb).attr('class', 'input-item')
-//         $(newPastTenseVerb).text($('#past-tense-verb-input').val())
-//         $('#past-tense-verb-list').append(newPastTenseVerb)
-//         $('#past-tense-verb-input').val('')
-//     }
-// });
-// $('#past-tense-verb-list').click(function (event) {
-//     if ($(event.target).is('button')) {
-//         var i = inputPastVerbs.indexOf($(event.target).text())
-//         inputPastVerbs.splice(i, 1)
-//         $(event.target).remove()
-//     }
-// })
+
+
 /*-------------------------ERASE-------------------------*/
 $('#erase').click(function () {
     nounArray = []
@@ -185,7 +181,6 @@ function check() {
             fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 if (data.query.search.length < 1) {
                     $('#check').text('❌')
                     invalidTopic = true
@@ -211,6 +206,7 @@ function check() {
 
 //when you click the "get wacky" button at the bottom, call preSearch function, which leads to wikiSearch function 
 $("#submit").on("click", preSearch)
+
 
 function preSearch() {
     gotWacky = true
@@ -591,30 +587,62 @@ $('#close-modal').click(function() {
 })
 
 
-//other TODOs - clean up wackified articles. Remove quotes, backslashes, \n's, etc.
 //maybe add sfx? soooo low priority
 //phone media queries...gonna be pretty yikes
 
 /*-------------------------LOCAL STORAGE-------------------------*/
 
 //past wacky button to pull original/wacky content from local storage 
-$("#load").on("click",loadWacky)
+//pulls words from local storage when past wacky button is clicked
+$("#load").on("click",function(){
 
-//pulls words from local storage when load wacky button is clicked
-function loadWacky() {
-    $('#article').css('visibility','visible')
-    $('#wiki-title').html(JSON.parse(localStorage.getItem("title")));
-    $('#wacky-content').html(JSON.parse(localStorage.getItem("wacky")));
-    $("#wiki-content").html(JSON.parse(localStorage.getItem("original")));
+    var storedNouns = JSON.parse(localStorage.getItem("nouns"));
+    pullStorage(inputNouns,storedNouns,'#noun-list');
 
-    $('#tts button').css('visibility','visible')
+    var storedAdj = JSON.parse(localStorage.getItem("adj"));
+    pullStorage(inputAdjectives,storedAdj, '#adjective-list');
 
-    $('#right-header').css('justify-content','space-between')
-    $('#spacer').css('display','block')
-    $('#article-buttons').css('display','block')
-    $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
-    $('#og-wiki').css('opacity','100%').css('background','transparent')
-    $("#wacky-content").css('display','block')
-    $("#wiki-content").css('display','none')
-    isWackified = true;
+    var storedAdv = JSON.parse(localStorage.getItem("adv"));
+    pullStorage(inputAdverbs,storedAdv, '#adverb-list')
+
+    var storedVerbs = JSON.parse(localStorage.getItem("verbs"))
+    pullStorage(inputVerbs,storedVerbs, '#verb-list');
+
+    loadWacky();
+
+})
+
+function loadWacky(){
+
+    var wacky = JSON.parse(localStorage.getItem("wacky"))
+    var original = JSON.parse(localStorage.getItem("original"))
+
+    if (wacky != null && original != null){
+        $('#wacky-content').html(wacky)
+        $('#wiki-content').text(original)
+        $('#article').css('visibility','visible')
+        $('#tts button').css('visibility','visible')
+        $('#right-header').css('justify-content','space-between')
+        $('#spacer').css('display','block')
+        $('#article-buttons').css('display','block')
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        isWackified = true;
+    } 
+}
+
+function pullStorage(input,stored,id){
+    if (stored === null){
+        return;
+    }
+    else {
+        $(id).empty();
+        for (let i = 0; i < stored.length; i++){
+            input.push(stored[i]);
+            newBtn = $("<button>").attr('class','input-item').text(stored[i])
+            $(id).append(newBtn)
+        }       
+    } 
 }
