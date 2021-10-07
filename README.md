@@ -22,13 +22,13 @@ THE WHOLE ~~&@$#ING*~~ **[Expletive]** THING!!
 Credits
 ==
 
-- Evan Hosni - Git Admin/Mastermind of Concept
+- [Evan Hosni](https://github.com/evanhosni) - Git Admin/Mastermind of Concept
 
-- Lindsay Fitzgerald - Project Manager/Wrinkly Brainer
+- [Lindsay Fitzgerald](https://github.com/lindsfitz) - Project Manager/Wrinkly Brainer
 
-- Juan Diego Lanata - Senior Researcher/Troubleshooter
+- [Juan Diego Lanata](https://github.com/JDLanata) - Senior Researcher/Troubleshooter
 
-- David Siegmann - Junior Researcher/Comedic Relief
+- [David Siegmann](https://github.com/DavidSiegmann) - Junior Researcher/Comedic Relief
 
 Resources
 =
