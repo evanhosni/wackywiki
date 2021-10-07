@@ -1,13 +1,15 @@
 //GLOBAL WORD ARRAY VARIABLES -- INPUT WORD ARRAYS AND PULLED ARTICLE ARRAYS
-var inputNouns = JSON.parse(localStorage.getItem("nouns")) || []
-var inputAdjectives = JSON.parse(localStorage.getItem("adjectives")) || []
-var inputAdverbs = JSON.parse(localStorage.getItem("adverbs")) || []
-var inputVerbs = JSON.parse(localStorage.getItem("verbs")) || []
-var inputPastVerbs = []
+var inputNouns = [];
+var inputAdjectives = [];
+var inputAdverbs = [];
+var inputVerbs = [];
+var inputPastVerbs = [];
 var articleNouns = [];
 var articleAdj = [];
 var articleAdv = [];
 var articleVerbs = [];
+var articleRest = [];
+var articleRepeats = [];
 
 
 // INPUT WORD ARRAY FUNCTIONS -- LEFT SIDE OF PAGE FUNCTIONS 
@@ -21,10 +23,11 @@ $("#noun-input").keyup(function (event) {
         inputNouns.push($('#noun-input').val())
         var newNoun = document.createElement('button')
         $(newNoun).attr('class', 'input-item')
-        $(newNoun).text($('#noun-input').val())///add '• ' before each item except first item in each array
+        $(newNoun).text($('#noun-input').val())
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
     }
+
 });
 $('#noun-list').click(function (event) {
     if ($(event.target).is('button')) {
@@ -147,7 +150,58 @@ var newTitle
 var urlKey
 var url
 
+
+//checks for valid article
+var isChecked
+var checkTimer
+
+$('#article-input').keyup(function(event) {
+    if (event.keyCode !== 13) {
+        $('#check').text('🤔')
+        clearInterval(checkTimer);
+        checkTimer = setInterval(check, 1000);
+    }
+})
+
+function check() {
+        inputTitle = $('#article-input').val()
+        if (inputTitle !== "") {
+            fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data.query.search.length < 1) {
+                    $('#check').text('❌')
+                    console.log(inputTitle)
+                } else {
+                    $('#check').text('✔️')
+                }
+            })
+        } else {
+            $('#check').text('')
+        }
+        clearInterval(checkTimer);
+}
+
+// function stopCheck() {
+
+// }
+
+//when you click the "get wacky" button at the bottom, call preSearch function, which leads to wikiSearch function 
 $("#submit").on("click", preSearch)
+
+// function preSearch() {
+//     inputTitle = $('#article-input').val()
+//     fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+//     .then(response => response.json())
+//     .then(data => {
+//         newTitle = data.query.search[0].title
+//         var tempArray = newTitle.split(' ')
+//         urlKey = tempArray.join('_')
+//         url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+//         wikiSearch()
+//     })
+// }
 
 function preSearch() {
     var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
@@ -193,7 +247,6 @@ function preSearch() {
                 newTitle = data.query.search[0].title
                 var tempArray = newTitle.split(' ')
                 urlKey = tempArray.join('_')
-                console.log('formatted topic for url: ' + urlKey)
                 url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
                 wikiSearch();
                 storeLast();
@@ -206,10 +259,11 @@ function preSearch() {
 }
 
 
+
 //when you click the "get wacky" button at the bottom, call wikiSearch function 
 
-
 var articleString;
+var isWackified
 
 function wikiSearch() {
 
@@ -230,14 +284,28 @@ function wikiSearch() {
         var title = data.query.pages[pageID].title;
 
         //convert the text content into a string
-        articleString = JSON.stringify(extract);
+        articleString = extract;
 
         //display the original article content on the page in the Original tab
-        $("#wiki-content").text(extract)
+        $('#article').css('visibility','visible')
         $('#wiki-title').text(title)
+        $("#wiki-content").text(extract)
+
+        $('#tts button').css('visibility','visible')
+
+        $('#right-header').css('justify-content','space-between')
+        $('#spacer').css('display','block')
+        $('#article-buttons').css('display','block')
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        isWackified = true;
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
+
+        //save OG article to local storage
         localStorage.setItem("Original", JSON.stringify(articleString));
 
     }
@@ -246,136 +314,133 @@ function wikiSearch() {
 
 }
 
+// Wackified and OG Wiki tab button settings below //TODO - make them permanently 'active' instead of focused
+
+$('#wackified-wiki').click(function() {
+    if (!isWackified) {
+        $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#og-wiki').css('opacity','100%').css('background','transparent')
+        $("#wacky-content").css('display','block')
+        $("#wiki-content").css('display','none')
+        synth.cancel()
+        isWackified = true;
+    }
+})
+
+$('#og-wiki').click(function() {
+    if (isWackified) {
+        $('#og-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+        $('#wackified-wiki').css('opacity','100%').css('background','transparent')
+        $("#wiki-content").css('display','block')
+        $("#wacky-content").css('display','none')
+        synth.cancel()
+        isWackified = false;
+    }
+})
+
 //create API functions from CDN to use in browser
 let wordpos = new WordPOS({
     // preload: true,
     dictPath: 'https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dict',
-    profile: true
+    profile: true,
+    preload: true,
+    stopwords: true,
+    debug: true,
 });
 
 
 //call API to pull words from article out of article based on POS
 function wordAPI(article) {
+    // var posResults = {};
+    wordpos.getPOS(article)
+        .then(results => { return results})
+        .then(data => {
+            var posResults = data;
 
-    wordpos.getNouns(article)
-        .then(res => {
-            articleNouns = res;
+            //split data based on POS
+            articleNouns = posResults.nouns;
+            articleVerbs = posResults.verbs;
+            articleAdj = posResults.adjectives;
+            articleAdv = posResults.adverbs;
+            articleRest = posResults.rest;
 
+            //split article into an array to replace words 
+            //and a holding array to remove replaced words so they are not replaced again 
+            var articleArray = articleString.split(" ");
+            var holdingArray = articleString.split(" ");
+
+            /*----NOUNS----*/
             shuffle(articleNouns);
             shuffle(inputNouns);
 
-            var articleArray = articleString.split(" ");
+            wordReplace(articleNouns, inputNouns, articleArray, holdingArray);
 
-            for (let i = 0; i < inputNouns.length; i++) {
-                removedNoun = articleNouns[i]
-                newNoun = inputNouns[i];
-                for (let j = 0; j < inputNouns.length; j++) {
-                    x = articleArray.indexOf(removedNoun);
-                    articleArray.splice(x, 1, newNoun)
-                }
-            }
 
-            var newArticleString = articleArray.join(' ').toString();
-            return newArticleString;
+            /*----VERBS----*/
+            shuffle(articleVerbs);
+            shuffle(inputVerbs);
+
+            wordReplace(articleVerbs, inputVerbs, articleArray, holdingArray);
+
+
+            /*----ADJECTIVES----*/
+            shuffle(articleAdj);
+            shuffle(inputAdjectives);
+
+            wordReplace(articleAdj, inputAdjectives, articleArray, holdingArray);
+
+            /*----ADVERBS----*/
+            shuffle(articleAdv);
+            shuffle(inputAdverbs)
+
+            wordReplace(articleAdv, inputAdverbs, articleArray, holdingArray);
+
+            /*CONVERT the final article array to a string and display it on the page*/
+            newArticleString = articleArray.join(" ").replace('"', '');
+            //save wacky wiki article to local storage
+            localStorage.setItem("wacky", JSON.stringify(newArticleString));
+            //display wacky article on the page 
+            $("#wacky-content").html(newArticleString)
         })
-        .then(article => {
-            wordpos.getAdjectives(article)
-                .then(res => {
-                    articleAdj = res;
-
-                    shuffle(articleAdj);
-                    shuffle(inputAdjectives);
-
-                    var articleArray = article.split(" ");
-
-                    for (let i = 0; i < inputAdjectives.length; i++) {
-                        removedAdj = articleAdj[i]
-                        newAdj = inputAdjectives[i];
-                        for (let j = 0; j < inputAdjectives.length; j++) {
-                            x = articleArray.indexOf(removedAdj);
-                            articleArray.splice(x, 1, newAdj)
-                        }
-                    }
-
-                    var newArticleString = articleArray.join(' ').toString();
-
-                    return newArticleString;
-
-                })
-
-                .then(article => {
-                    wordpos.getVerbs(article)
-                        .then(res => {
-                            articleVerbs = res;
-
-                            shuffle(articleVerbs);
-                            shuffle(inputVerbs);
-
-                            var articleArray = article.split(" ");
-
-                            for (let i = 0; i < inputVerbs.length; i++) {
-                                removedVerb = articleVerbs[i]
-                                newVerb = inputVerbs[i];
-                                for (let j = 0; j < inputVerbs.length; j++) {
-                                    x = articleArray.indexOf(removedVerb);
-                                    articleArray.splice(x, 1, newVerb)
-                                }
-                            }
-
-                            var newArticleString = articleArray.join(' ').toString();
-
-                            return newArticleString;
-                        })
+}
 
 
-                        .then(article => {
-                            wordpos.getAdverbs(article)
-                                .then(res => {
-                                    articleAdv = res;
 
-                                    shuffle(articleAdv);
-                                    shuffle(inputAdverbs);
+//function to choose a replacement word from input words, replace in the article array, and remove that word (and any repeats of that word) from the holding array so that it cannot be replaced again 
+function wordReplace(articlePOS, inputPOS, articleArray, holdingArray) {
+    for (let i = 0; i < inputPOS.length; i++) {
+        var removedWord = articlePOS[i]
+        var newWord = "<span>" + inputPOS[i] + "</span>";
+        for (let j = 0; j < inputPOS.length; j++) {
+            x = articleArray.indexOf(removedWord);
+            articleArray.splice(x, 1, newWord)
+            holdingArray.splice(x, 1)
+        }
+    }
 
-                                    var articleArray = article.split(" ");
+    //remove all occurances of the removedWord from the holding array 
+    for (let i = 0; i < holdingArray.length; i++) {
+        if (removedWord === holdingArray[i]) {
+            holdingArray.splice(holdingArray[i], 1)
+        }
+    }
 
-                                    for (let i = 0; i < inputAdverbs.length; i++) {
-                                        removedAdverb = articleAdv[i]
-                                        newAdverb = inputAdverbs[i];
-                                        for (let j = 0; j < inputAdverbs.length; j++) {
-                                            x = articleArray.indexOf(removedAdverb);
-                                            articleArray.splice(x, 1, newAdverb)
-                                        }
-                                    }
-
-                                    var newArticleString = articleArray.join(' ').toString();
-
-                                    $("#wacky-content").text(newArticleString)
-                                    localStorage.setItem("wacky", JSON.stringify(newArticleString));
-                                   
-
-                                })
-                        })
-                })
-        })
+    return holdingArray;
 }
 
 
 //shuffle arrays so that a random word is selected every time
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
-
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
         // And swap it with the current element.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }
-
     return array;
 }
 
@@ -389,6 +454,7 @@ $(function () {
 
 
 
+
 /*-------------------------TEXT TO SPEECH-------------------------*/
 var synth = window.speechSynthesis;
 
@@ -397,9 +463,7 @@ var inputTxt = document.querySelector('.txt');
 var voiceSelect = document.querySelector('select');
 
 var pitch = document.querySelector('#pitch');
-var pitchValue = document.querySelector('.pitch-value');
 var rate = document.querySelector('#rate');
-var rateValue = document.querySelector('.rate-value');
 
 var voices = [];
 
@@ -422,7 +486,7 @@ function populateVoiceList() {
         option.setAttribute('data-name', voices[i].name);
         voiceSelect.appendChild(option);
     }
-    selectedIndex = 19;//do index of microsoft david instead, cleaner
+    selectedIndex = 19;//TODO - do index of microsoft david instead, cleaner...low priority
     voiceSelect.selectedIndex = selectedIndex;
 }
 
@@ -431,14 +495,31 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function speak() {
-    var article = $('#article').text()
+
+var mouthSpeed = 0.6 //note, the higher the value, the slower the movement
+
+rate.onchange = function() {
+    mouthSpeed = (0.5 / rate.value)
+    console.log(mouthSpeed)
+}
+
+function speak(){
+    var article
+    if (isWackified) {
+        article = $('#wacky-content').text()
+    } else {
+        article = $('#wiki-content').text()
+    }
     console.log(article)
     if (synth.speaking) {
-        console.error('speechSynthesis.speaking');
-        synth.cancel()//hmmm
-        // SpeechSynthesisUtterance.end(); ability to pause/stop
-    } else if (article !== '') {
+        synth.cancel()
+        $('.vampi-mouth').css('animation','none')
+        $('#play').text("🔊 Let's Hear It!")
+        /*$('#tts:hover').css('visibility','visible')/*TODO - permanently stays visible, which we dont want*/
+ 
+    } else if (article.trim() !== '') {
+        $('#play').text("🔇 Stop!")
+        // $('#tts:hover').css('visibility','hidden')
         var utterThis = new SpeechSynthesisUtterance(article);
         utterThis.onend = function (event) {
             console.log('SpeechSynthesisUtterance.onend');
@@ -456,41 +537,49 @@ function speak() {
         utterThis.pitch = pitch.value;
         utterThis.rate = rate.value;
         synth.speak(utterThis);
+        $('.vampi-mouth').css('animation','speak forwards infinite ' + mouthSpeed + 's ease-in-out')
+        setInterval(function(){ 
+            if (!synth.speaking) {
+                $('.vampi-mouth').css('animation','none')
+                $('#play').text("🔊 Let's Hear It!")
+                /*$('#tts:hover').css('visibility','visible')*/
+            }
+        }, 100);
     }
 }
 
-// inputForm.onsubmit = function(event) {
-//     event.preventDefault();
-//     speak();
-//     inputTxt.blur();
-// }
-
-pitch.onchange = function () {
-    pitchValue.textContent = pitch.value;
-}
-
-rate.onchange = function () {
-    rateValue.textContent = rate.value;
-}
-
-voiceSelect.onchange = function () {
-    speak();
-}
-
-$('#play').click(function () {
+$('#play').click(function() {
     speak()
 })
 
 
 
+/*-------------------------WACKY WILFRED-------------------------*/
+let ufo = document.querySelector('body');
+
+ufo.addEventListener('mousemove', (e) => {
+  let eyes = document.querySelector('.eyes');
+  let mouseX = (eyes.getBoundingClientRect().left); 
+  let mouseY = (eyes.getBoundingClientRect().top);
+  let radianDegrees = Math.atan2(e.pageX - mouseX, e.pageY - mouseY);
+  let rotationDegrees = (radianDegrees * (180/ Math.PI) * -1) + 180;
+  eyes.style.transform = `rotate(${rotationDegrees}deg)`
+});
 
 
+/*-------------------------WELCOME MODAL-------------------------*/
+var welcomeMessages = [
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I suffer from seasonal depression! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I can't remember the last time my father looked me in the eye! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and my dog ran away last week! Anyways, let's get wacky.",
+    "Welcome to Wacky-Wiki. My name is Wacky Wilfred and I just lost my job! Anyways, let's get wacky."
+]
 
-//////////// Local Storage ////////////////////////
+$('#welcome-message').text(welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)])
 
 /////displays stored content on page load////
 
-$("#past").on("click", pastWacky)
+$("#load").on("click", pastWacky)
 
 function pastWacky(){
 
@@ -500,21 +589,26 @@ function pastWacky(){
     // storedWords();
 
 
-
 }
+$('#close-modal').click(function() {
+    $('#welcome').removeClass('is-active')
+    $('.monster').css('z-index',1)
+})
 
 
-function storeLast()
-{
-/////stores input values on click/////
-    
-    localStorage.setItem('nouns',JSON.stringify(inputNouns))    
-    localStorage.setItem('adjectives',JSON.stringify(inputAdjectives))
-    localStorage.setItem('adverbs',JSON.stringify(inputAdverbs))
-    localStorage.setItem('verbs',JSON.stringify(inputVerbs))
+//other TODOs - clean up wackified articles. Remove quotes, backslashes, \n's, etc.
+//maybe add sfx? soooo low priority
+//phone media queries...gonna be pretty yikes
 
+/*-------------------------LOCAL STORAGE-------------------------*/
 
+//past wacky button to pull original/wacky content from local storage 
+$("#past").on("click",pastWacky)
 
+//pulls words from local storage when past wacky button is clicked
+function pastWacky() {
+    $('#wacky-content').html(JSON.parse(localStorage.getItem("wacky")));
+    $("#wiki-content").html(JSON.parse(localStorage.getItem("Original")));
 }
 
 
