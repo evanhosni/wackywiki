@@ -19,13 +19,16 @@ var articleRepeats = [];
 
 /*-------------------------NOUNS-------------------------*/
 $("#noun-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#noun-input').val() != '') {
+    if (event.keyCode === 13 && $('#noun-input').val().trim() != '') {
         inputNouns.push($('#noun-input').val())
         var newNoun = document.createElement('button')
         $(newNoun).attr('class', 'input-item')
         $(newNoun).text($('#noun-input').val())
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
+        if (inputNouns.length >= 3) {
+            $("#noun-warning").empty();
+        };
     }
     localStorage.setItem("nouns", JSON.stringify(inputNouns))
 
@@ -41,13 +44,16 @@ $('#noun-list').click(function (event) {
 })
 /*-------------------------ADJECTIVES-------------------------*/
 $("#adjective-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#adjective-input').val() != '') {
+    if (event.keyCode === 13 && $('#adjective-input').val().trim() != '') {
         inputAdjectives.push($('#adjective-input').val())
         var newAdjective = document.createElement('button')
         $(newAdjective).attr('class', 'input-item')
         $(newAdjective).text($('#adjective-input').val())
         $('#adjective-list').append(newAdjective)
         $('#adjective-input').val('')
+        if (inputAdjectives.length >= 3) {
+            $("#adjective-warning").empty();
+        };
     }
     localStorage.setItem("adj", JSON.stringify(inputAdjectives))
 });
@@ -62,13 +68,16 @@ $('#adjective-list').click(function (event) {
 })
 /*-------------------------ADVERBS-------------------------*/
 $("#adverb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#adverb-input').val() != '') {
+    if (event.keyCode === 13 && $('#adverb-input').val().trim() != '') {
         inputAdverbs.push($('#adverb-input').val())
         var newAdverb = document.createElement('button')
         $(newAdverb).attr('class', 'input-item')
         $(newAdverb).text($('#adverb-input').val())
         $('#adverb-list').append(newAdverb)
         $('#adverb-input').val('')
+        if (inputAdverbs.length >= 3) {
+            $("#adverb-warning").empty();
+        };
     }
     localStorage.setItem("adv", JSON.stringify(inputAdverbs))
 });
@@ -83,13 +92,16 @@ $('#adverb-list').click(function (event) {
 })
 /*-------------------------VERBS-------------------------*/
 $("#verb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#verb-input').val() != '') {
+    if (event.keyCode === 13 && $('#verb-input').val().trim() != '') {
         inputVerbs.push($('#verb-input').val())
         var newVerb = document.createElement('button')
         $(newVerb).attr('class', 'input-item')
         $(newVerb).text($('#verb-input').val())
         $('#verb-list').append(newVerb)
         $('#verb-input').val('')
+        if (inputVerbs.length >= 3) {
+            $("#verb-warning").empty();
+        };
     }
     localStorage.setItem("verbs", JSON.stringify(inputVerbs))
 });
@@ -150,10 +162,14 @@ var url
 //checks for valid article
 var isChecked
 var checkTimer
+var invalidTopic
+var gotWacky
 
 $('#article-input').keyup(function(event) {
-    if (event.keyCode !== 13) {
+    if (event.keyCode !== 13 && event.keyCode !== 32) {
+        gotWacky = false
         $('#check').text('🤔')
+        $("#topic-warning").empty();
         clearInterval(checkTimer);
         checkTimer = setInterval(check, 1000);
     }
@@ -161,15 +177,21 @@ $('#article-input').keyup(function(event) {
 
 function check() {
         inputTitle = $('#article-input').val()
-        if (inputTitle !== "") {
+        if (inputTitle.trim() !== "") {
             fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
             .then(response => response.json())
             .then(data => {
                 if (data.query.search.length < 1) {
                     $('#check').text('❌')
-                    console.log(inputTitle)
+                    invalidTopic = true
+                    if (gotWacky) {
+                        var invalidTopicWarning = $("<p>").text("Please enter a valid topic")
+                        $("#topic-warning").empty();
+                        $("#topic-warning").append(invalidTopicWarning);
+                    }
                 } else {
                     $('#check').text('✔️')
+                    invalidTopic = false
                 }
             })
         } else {
@@ -187,11 +209,23 @@ $("#submit").on("click", preSearch)
 
 
 function preSearch() {
-    var nounWarning = $("<p>").text("Please Choose Atleast 3 Nouns").attr("style", "color:red;background-color:white;");
-    var adjectiveWarning = $("<p>").text("Please Choose Atleast 3 Adjectives").attr("style", "color:red;background-color:white;");
-    var adverbWarning = $("<p>").text("Please Choose Atleast 3 Adverbs").attr("style", "color:red;background-color:white;");
-    var verbWarning = $("<p>").text("Please Choose Atleast 3 Verbs").attr("style", "color:red;background-color:white;");
-
+    gotWacky = true
+    var topicWarning = $("<p>").text("Please enter a topic")
+    var invalidTopicWarning = $("<p>").text("Please enter a valid topic")
+    var nounWarning = $("<p>").text("Please enter at least 3 Nouns")
+    var adjectiveWarning = $("<p>").text("Please enter at least 3 Adjectives")
+    var adverbWarning = $("<p>").text("Please enter at least 3 Adverbs")
+    var verbWarning = $("<p>").text("Please enter at least 3 Verbs")
+    inputTitle = $('#article-input').val()
+    if (inputTitle === "") {
+        $("#topic-warning").empty();
+        $("#topic-warning").append(topicWarning);
+    } else if (invalidTopic) {
+        $("#topic-warning").empty();
+        $("#topic-warning").append(invalidTopicWarning);
+    } else {
+        $("#topic-warning").empty();
+    };
     if (inputNouns.length < 3) {
         $("#noun-warning").empty();
         $("#noun-warning").append(nounWarning);
@@ -284,6 +318,7 @@ function wikiSearch() {
         wordAPI(articleString)
 
         //save OG article to local storage
+        localStorage.setItem("title", JSON.stringify(title));
         localStorage.setItem("original", JSON.stringify(articleString));
 
     }
@@ -421,16 +456,6 @@ function shuffle(array) {
     }
     return array;
 }
-
-
-//jquery UI tab function
-$(function () {
-    $("#tabs").tabs();
-});
-
-
-
-
 
 
 /*-------------------------TEXT TO SPEECH-------------------------*/
@@ -583,11 +608,11 @@ $("#load").on("click",function(){
     var storedVerbs = JSON.parse(localStorage.getItem("verbs"))
     pullStorage(inputVerbs,storedVerbs, '#verb-list');
 
-    pastWacky();
+    loadWacky();
 
 })
 
-function pastWacky(){
+function loadWacky(){
 
     var wacky = JSON.parse(localStorage.getItem("wacky"))
     var original = JSON.parse(localStorage.getItem("original"))
