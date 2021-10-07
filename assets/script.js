@@ -1,13 +1,15 @@
 //GLOBAL WORD ARRAY VARIABLES -- INPUT WORD ARRAYS AND PULLED ARTICLE ARRAYS
-var inputNouns = []
-var inputAdjectives = []
-var inputAdverbs = []
-var inputVerbs = []
-var inputPastVerbs = []
+var inputNouns = [];
+var inputAdjectives = [];
+var inputAdverbs = [];
+var inputVerbs = [];
+var inputPastVerbs = [];
 var articleNouns = [];
 var articleAdj = [];
 var articleAdv = [];
 var articleVerbs = [];
+var articleRest = [];
+var articleRepeats = [];
 
 
 // INPUT WORD ARRAY FUNCTIONS -- LEFT SIDE OF PAGE FUNCTIONS 
@@ -17,14 +19,18 @@ var articleVerbs = [];
 
 /*-------------------------NOUNS-------------------------*/
 $("#noun-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#noun-input').val() != '') {
+    if (event.keyCode === 13 && $('#noun-input').val().trim() != '') {
         inputNouns.push($('#noun-input').val())
         var newNoun = document.createElement('button')
         $(newNoun).attr('class', 'input-item')
         $(newNoun).text($('#noun-input').val())
         $('#noun-list').append(newNoun)
         $('#noun-input').val('')
+        if (inputNouns.length >= 3) {
+            $("#noun-warning").empty();
+        };
     }
+
 });
 $('#noun-list').click(function (event) {
     if ($(event.target).is('button')) {
@@ -35,13 +41,16 @@ $('#noun-list').click(function (event) {
 })
 /*-------------------------ADJECTIVES-------------------------*/
 $("#adjective-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#adjective-input').val() != '') {
+    if (event.keyCode === 13 && $('#adjective-input').val().trim() != '') {
         inputAdjectives.push($('#adjective-input').val())
         var newAdjective = document.createElement('button')
         $(newAdjective).attr('class', 'input-item')
         $(newAdjective).text($('#adjective-input').val())
         $('#adjective-list').append(newAdjective)
         $('#adjective-input').val('')
+        if (inputAdjectives.length >= 3) {
+            $("#adjective-warning").empty();
+        };
     }
 });
 $('#adjective-list').click(function (event) {
@@ -53,13 +62,16 @@ $('#adjective-list').click(function (event) {
 })
 /*-------------------------ADVERBS-------------------------*/
 $("#adverb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#adverb-input').val() != '') {
+    if (event.keyCode === 13 && $('#adverb-input').val().trim() != '') {
         inputAdverbs.push($('#adverb-input').val())
         var newAdverb = document.createElement('button')
         $(newAdverb).attr('class', 'input-item')
         $(newAdverb).text($('#adverb-input').val())
         $('#adverb-list').append(newAdverb)
         $('#adverb-input').val('')
+        if (inputAdverbs.length >= 3) {
+            $("#adverb-warning").empty();
+        };
     }
 });
 $('#adverb-list').click(function (event) {
@@ -71,13 +83,16 @@ $('#adverb-list').click(function (event) {
 })
 /*-------------------------VERBS-------------------------*/
 $("#verb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#verb-input').val() != '') {
+    if (event.keyCode === 13 && $('#verb-input').val().trim() != '') {
         inputVerbs.push($('#verb-input').val())
         var newVerb = document.createElement('button')
         $(newVerb).attr('class', 'input-item')
         $(newVerb).text($('#verb-input').val())
         $('#verb-list').append(newVerb)
         $('#verb-input').val('')
+        if (inputVerbs.length >= 3) {
+            $("#verb-warning").empty();
+        };
     }
 });
 $('#verb-list').click(function (event) {
@@ -88,23 +103,23 @@ $('#verb-list').click(function (event) {
     }
 })
 /*-------------------------PAST-TENSE VERBS-------------------------*/
-$("#past-tense-verb-input").keyup(function (event) {
-    if (event.keyCode === 13 && $('#past-tense-verb-input').val() != '') {
-        inputPastVerbs.push($('#past-tense-verb-input').val())
-        var newPastTenseVerb = document.createElement('button')
-        $(newPastTenseVerb).attr('class', 'input-item')
-        $(newPastTenseVerb).text($('#past-tense-verb-input').val())
-        $('#past-tense-verb-list').append(newPastTenseVerb)
-        $('#past-tense-verb-input').val('')
-    }
-});
-$('#past-tense-verb-list').click(function (event) {
-    if ($(event.target).is('button')) {
-        var i = inputPastVerbs.indexOf($(event.target).text())
-        inputPastVerbs.splice(i, 1)
-        $(event.target).remove()
-    }
-})
+// $("#past-tense-verb-input").keyup(function (event) {
+//     if (event.keyCode === 13 && $('#past-tense-verb-input').val().trim() != '') {
+//         inputPastVerbs.push($('#past-tense-verb-input').val())
+//         var newPastTenseVerb = document.createElement('button')
+//         $(newPastTenseVerb).attr('class', 'input-item')
+//         $(newPastTenseVerb).text($('#past-tense-verb-input').val())
+//         $('#past-tense-verb-list').append(newPastTenseVerb)
+//         $('#past-tense-verb-input').val('')
+//     }
+// });
+// $('#past-tense-verb-list').click(function (event) {
+//     if ($(event.target).is('button')) {
+//         var i = inputPastVerbs.indexOf($(event.target).text())
+//         inputPastVerbs.splice(i, 1)
+//         $(event.target).remove()
+//     }
+// })
 /*-------------------------ERASE-------------------------*/
 $('#erase').click(function () {
     nounArray = []
@@ -126,15 +141,15 @@ $('#erase').click(function () {
 })
 /*-------------------------COLLAPSE-------------------------*/
 var collapsed = false
-$('#collapse').click(function() {
+$('#collapse').click(function () {
     if (collapsed == false) {
-        $('#left-div').css('width','0')
-        $('#left-div').css('min-width','0')
+        $('#left-div').css('width', '0')
+        $('#left-div').css('min-width', '0')
         $('#collapse').text('>>')
         collapsed = true
     } else {
-        $('#left-div').css('width','550px')
-        $('#left-div').css('min-width','250px')
+        $('#left-div').css('width', '550px')
+        $('#left-div').css('min-width', '250px')
         $('#collapse').text('<<')
         collapsed = false
     }
@@ -147,13 +162,18 @@ var newTitle
 var urlKey
 var url
 
+
 //checks for valid article
 var isChecked
 var checkTimer
+var invalidTopic
+var gotWacky
 
 $('#article-input').keyup(function(event) {
-    if (event.keyCode !== 13) {
+    if (event.keyCode !== 13 && event.keyCode !== 32) {
+        gotWacky = false
         $('#check').text('🤔')
+        $("#topic-warning").empty();
         clearInterval(checkTimer);
         checkTimer = setInterval(check, 1000);
     }
@@ -161,16 +181,22 @@ $('#article-input').keyup(function(event) {
 
 function check() {
         inputTitle = $('#article-input').val()
-        if (inputTitle !== "") {
+        if (inputTitle.trim() !== "") {
             fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
             .then(response => response.json())
             .then(data => {
                 console.log(data)
                 if (data.query.search.length < 1) {
                     $('#check').text('❌')
-                    console.log(inputTitle)
+                    invalidTopic = true
+                    if (gotWacky) {
+                        var invalidTopicWarning = $("<p>").text("Please enter a valid topic")
+                        $("#topic-warning").empty();
+                        $("#topic-warning").append(invalidTopicWarning);
+                    }
                 } else {
                     $('#check').text('✔️')
+                    invalidTopic = false
                 }
             })
         } else {
@@ -187,17 +213,70 @@ function check() {
 $("#submit").on("click", preSearch)
 
 function preSearch() {
+    gotWacky = true
+    var topicWarning = $("<p>").text("Please enter a topic")
+    var invalidTopicWarning = $("<p>").text("Please enter a valid topic")
+    var nounWarning = $("<p>").text("Please enter at least 3 Nouns")
+    var adjectiveWarning = $("<p>").text("Please enter at least 3 Adjectives")
+    var adverbWarning = $("<p>").text("Please enter at least 3 Adverbs")
+    var verbWarning = $("<p>").text("Please enter at least 3 Verbs")
     inputTitle = $('#article-input').val()
-    fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
-    .then(response => response.json())
-    .then(data => {
-        newTitle = data.query.search[0].title
-        var tempArray = newTitle.split(' ')
-        urlKey = tempArray.join('_')
-        url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
-        wikiSearch()
-    })
+    if (inputTitle === "") {
+        $("#topic-warning").empty();
+        $("#topic-warning").append(topicWarning);
+    } else if (invalidTopic) {
+        $("#topic-warning").empty();
+        $("#topic-warning").append(invalidTopicWarning);
+    } else {
+        $("#topic-warning").empty();
+    };
+    if (inputNouns.length < 3) {
+        $("#noun-warning").empty();
+        $("#noun-warning").append(nounWarning);
+    } else {
+        $("#noun-warning").empty();
+    };
+    if (inputAdjectives.length < 3) {
+        $("#adjective-warning").empty();
+        $("#adjective-warning").append(adjectiveWarning);
+    } else {
+        $("#adjective-warning").empty();
+    }
+    if (inputAdverbs.length < 3) {
+        $("#adverb-warning").empty();
+        $("#adverb-warning").append(adverbWarning);
+    } else {
+        $("#adverb-warning").empty();
+    }
+    if (inputVerbs.length < 3) {
+        $("#verb-warning").empty();
+        $("#verb-warning").append(verbWarning);
+    } else {
+        $("#verb-warning").empty();
+    }
+    if (inputNouns.length >= 3 && inputAdjectives.length >= 3 && inputAdverbs.length >= 3 && inputVerbs.length >= 3) {
+        $("#noun-warning").empty();
+        $("#adjective-warning").empty();
+        $("#adverb-warning").empty();
+        $("#verb-warning").empty();
+
+
+        inputTitle = $('#article-input').val()
+        fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + inputTitle + '&utf8=&format=json&origin=*')
+            .then(response => response.json())
+            .then(data => {
+                newTitle = data.query.search[0].title
+                var tempArray = newTitle.split(' ')
+                urlKey = tempArray.join('_')
+                url = ('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&titles=' + urlKey)
+                wikiSearch()
+            })
+    }
 }
+
+
+
+//when you click the "get wacky" button at the bottom, call wikiSearch function 
 
 var articleString;
 var isWackified
@@ -221,7 +300,7 @@ function wikiSearch() {
         var title = data.query.pages[pageID].title;
 
         //convert the text content into a string
-        articleString = JSON.stringify(extract);
+        articleString = extract;
 
         //display the original article content on the page in the Original tab
         $('#article').css('visibility','visible')
@@ -241,6 +320,10 @@ function wikiSearch() {
 
         //call function to sort and replace words in wiki article
         wordAPI(articleString)
+
+        //save OG article to local storage
+        localStorage.setItem("title", JSON.stringify(title));
+        localStorage.setItem("original", JSON.stringify(articleString));
 
     }
     // Send request to the server asynchronously
@@ -276,141 +359,107 @@ $('#og-wiki').click(function() {
 let wordpos = new WordPOS({
     // preload: true,
     dictPath: 'https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dict',
-    profile: true
+    profile: true,
+    preload: true,
+    stopwords: true,
+    debug: true,
 });
 
 
 //call API to pull words from article out of article based on POS
 function wordAPI(article) {
+    // var posResults = {};
+    wordpos.getPOS(article)
+        .then(results => { return results})
+        .then(data => {
+            var posResults = data;
 
-    wordpos.getNouns(article)
-        .then(res => {
-           articleNouns = res; 
+            //split data based on POS
+            articleNouns = posResults.nouns;
+            articleVerbs = posResults.verbs;
+            articleAdj = posResults.adjectives;
+            articleAdv = posResults.adverbs;
+            articleRest = posResults.rest;
 
+            //split article into an array to replace words 
+            //and a holding array to remove replaced words so they are not replaced again 
+            var articleArray = articleString.split(" ");
+            var holdingArray = articleString.split(" ");
+
+            /*----NOUNS----*/
             shuffle(articleNouns);
             shuffle(inputNouns);
 
-            var articleArray = articleString.split(" ");
+            wordReplace(articleNouns, inputNouns, articleArray, holdingArray);
 
-            for (let i = 0; i < inputNouns.length; i++) {
-                removedNoun = articleNouns[i]
-                newNoun = inputNouns[i];
-                for (let j = 0; j < inputNouns.length; j++) {
-                    x = articleArray.indexOf(removedNoun);
-                    articleArray.splice(x, 1, newNoun)
-                }
-            }
 
-           var newArticleString = articleArray.join(' ').toString();
-           return newArticleString;
+            /*----VERBS----*/
+            shuffle(articleVerbs);
+            shuffle(inputVerbs);
+
+            wordReplace(articleVerbs, inputVerbs, articleArray, holdingArray);
+
+
+            /*----ADJECTIVES----*/
+            shuffle(articleAdj);
+            shuffle(inputAdjectives);
+
+            wordReplace(articleAdj, inputAdjectives, articleArray, holdingArray);
+
+            /*----ADVERBS----*/
+            shuffle(articleAdv);
+            shuffle(inputAdverbs)
+
+            wordReplace(articleAdv, inputAdverbs, articleArray, holdingArray);
+
+            /*CONVERT the final article array to a string and display it on the page*/
+            newArticleString = articleArray.join(" ").replace('"', '');
+            //save wacky wiki article to local storage
+            localStorage.setItem("wacky", JSON.stringify(newArticleString));
+            //display wacky article on the page 
+            $("#wacky-content").html(newArticleString)
         })
-        .then(article => {
-            wordpos.getAdjectives(article)
-            .then(res => {
-                articleAdj = res;
-
-                shuffle(articleAdj);
-                shuffle(inputAdjectives);
-
-                var articleArray = article.split(" ");
-
-                for (let i = 0; i < inputAdjectives.length; i++) {
-                    removedAdj = articleAdj[i]
-                    newAdj = inputAdjectives[i];
-                    for (let j = 0; j < inputAdjectives.length; j++) {
-                        x = articleArray.indexOf(removedAdj);
-                        articleArray.splice(x, 1, newAdj)
-                    }
-                }
-
-                var newArticleString = articleArray.join(' ').toString();
-
-                return newArticleString;
-
-            })
-
-            .then(article => {
-                wordpos.getVerbs(article)
-                .then(res => {
-                    articleVerbs = res;
-    
-                    shuffle(articleVerbs);
-                    shuffle(inputVerbs);
-    
-                    var articleArray = article.split(" ");
-    
-                    for (let i = 0; i < inputVerbs.length; i++) {
-                        removedVerb = articleVerbs[i]
-                        newVerb = inputVerbs[i];
-                        for (let j = 0; j < inputVerbs.length; j++) {
-                            x = articleArray.indexOf(removedVerb);
-                            articleArray.splice(x, 1, newVerb)
-                        }
-                    }
-    
-                    var newArticleString = articleArray.join(' ').toString();
-    
-                    return newArticleString;
-                })
+}
 
 
-                .then(article => {
-                    wordpos.getAdverbs(article)
-                    .then(res => {
-                        articleAdv = res;
 
-                        shuffle(articleAdv);
-                        shuffle(inputAdverbs);
+//function to choose a replacement word from input words, replace in the article array, and remove that word (and any repeats of that word) from the holding array so that it cannot be replaced again 
+function wordReplace(articlePOS, inputPOS, articleArray, holdingArray) {
+    for (let i = 0; i < inputPOS.length; i++) {
+        var removedWord = articlePOS[i]
+        var newWord = "<span>" + inputPOS[i] + "</span>";
+        for (let j = 0; j < inputPOS.length; j++) {
+            x = articleArray.indexOf(removedWord);
+            articleArray.splice(x, 1, newWord)
+            holdingArray.splice(x, 1)
+        }
+    }
 
-                        var articleArray = article.split(" ");
+    //remove all occurances of the removedWord from the holding array 
+    for (let i = 0; i < holdingArray.length; i++) {
+        if (removedWord === holdingArray[i]) {
+            holdingArray.splice(holdingArray[i], 1)
+        }
+    }
 
-                        for (let i = 0; i < inputAdverbs.length; i++) {
-                            removedAdverb = articleAdv[i]
-                            newAdverb = inputAdverbs[i];
-                            for (let j = 0; j < inputAdverbs.length; j++) {
-                                x = articleArray.indexOf(removedAdverb);
-                                articleArray.splice(x, 1, newAdverb)
-                            }
-                        }
-        
-                        var newArticleString = articleArray.join(' ').toString();
-        
-                        $("#wacky-content").text(newArticleString)
-
-                    })
-                })
-            })
-        })
+    return holdingArray;
 }
 
 
 //shuffle arrays so that a random word is selected every time
 function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-  
+    let currentIndex = array.length, randomIndex;
     // While there remain elements to shuffle...
     while (currentIndex != 0) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
     }
-  
     return array;
 }
-
-
-//jquery UI tab function
-$(function () {
-    $("#tabs").tabs();
-});
-
-
-
 
 
 /*-------------------------TEXT TO SPEECH-------------------------*/
@@ -428,16 +477,16 @@ var voices = [];
 function populateVoiceList() {
     voices = synth.getVoices().sort(function (a, b) {
         const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
-        if ( aname < bname ) return -1;
-        else if ( aname == bname ) return 0;
+        if (aname < bname) return -1;
+        else if (aname == bname) return 0;
         else return +1;
     });
     var selectedIndex = voiceSelect.selectedIndex < 0 ? 0 : voiceSelect.selectedIndex;
     voiceSelect.innerHTML = '';
-    for(i = 0; i < voices.length ; i++) {
+    for (i = 0; i < voices.length; i++) {
         var option = document.createElement('option');
         option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
-        if(voices[i].default) {
+        if (voices[i].default) {
             option.textContent += ' -- DEFAULT';
         }
         option.setAttribute('data-lang', voices[i].lang);
@@ -449,9 +498,10 @@ function populateVoiceList() {
 }
 
 populateVoiceList();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
+if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
+
 
 var mouthSpeed = 0.6 //note, the higher the value, the slower the movement
 
@@ -485,10 +535,10 @@ function speak(){
             console.error('SpeechSynthesisUtterance.onerror');
         }
         var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
-        for(i = 0; i < voices.length ; i++) {
-            if(voices[i].name === selectedOption) {
+        for (i = 0; i < voices.length; i++) {
+            if (voices[i].name === selectedOption) {
                 utterThis.voice = voices[i];
-            break;
+                break;
             }
         }
         utterThis.pitch = pitch.value;
@@ -508,6 +558,7 @@ function speak(){
 $('#play').click(function() {
     speak()
 })
+
 
 
 /*-------------------------WACKY WILFRED-------------------------*/
@@ -543,3 +594,27 @@ $('#close-modal').click(function() {
 //other TODOs - clean up wackified articles. Remove quotes, backslashes, \n's, etc.
 //maybe add sfx? soooo low priority
 //phone media queries...gonna be pretty yikes
+
+/*-------------------------LOCAL STORAGE-------------------------*/
+
+//past wacky button to pull original/wacky content from local storage 
+$("#load").on("click",loadWacky)
+
+//pulls words from local storage when load wacky button is clicked
+function loadWacky() {
+    $('#article').css('visibility','visible')
+    $('#wiki-title').html(JSON.parse(localStorage.getItem("title")));
+    $('#wacky-content').html(JSON.parse(localStorage.getItem("wacky")));
+    $("#wiki-content").html(JSON.parse(localStorage.getItem("original")));
+
+    $('#tts button').css('visibility','visible')
+
+    $('#right-header').css('justify-content','space-between')
+    $('#spacer').css('display','block')
+    $('#article-buttons').css('display','block')
+    $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
+    $('#og-wiki').css('opacity','100%').css('background','transparent')
+    $("#wacky-content").css('display','block')
+    $("#wiki-content").css('display','none')
+    isWackified = true;
+}
