@@ -3,7 +3,7 @@ var inputNouns = [];
 var inputAdjectives = [];
 var inputAdverbs = [];
 var inputVerbs = [];
-var inputPastVerbs = [];
+// var inputPastVerbs = [];
 var articleNouns = [];
 var articleAdj = [];
 var articleAdv = [];
@@ -123,6 +123,14 @@ $('#erase').click(function () {
     adverbArray = []
     verbArray = []
     pastTenseVerbArray = []
+    inputNouns = [];
+    inputAdjectives = [];
+    inputAdverbs = [];
+    inputVerbs = [];
+    if ($("#wiki-content").text().trim() !== '') {
+        localStorage.clear()
+    }
+    $('#check').text('')
     $('#article-input').val('')
     $('#noun-input').val('')
     $('#adjective-input').val('')
@@ -139,13 +147,15 @@ $('#erase').click(function () {
 var collapsed = false
 $('#collapse').click(function () {
     if (collapsed == false) {
-        $('#left-div').css('width', '0')
-        $('#left-div').css('min-width', '0')
+        $('#left-div').css('display', 'none')
+        // $('#left-div').css('width', '0')
+        // $('#left-div').css('min-width', '0')
         $('#collapse').text('>>')
         collapsed = true
     } else {
-        $('#left-div').css('width', '550px')
-        $('#left-div').css('min-width', '250px')
+        $('#left-div').css('display', 'flex')
+        // $('#left-div').css('width', '550px')
+        // $('#left-div').css('min-width', '250px')
         $('#collapse').text('<<')
         collapsed = false
     }
@@ -294,11 +304,15 @@ function wikiSearch() {
         var pageID = Object.keys(data.query.pages)[0];
         var extract = data.query.pages[pageID].extract;
         var title = data.query.pages[pageID].title;
+        var input = $('#article-input').val()
 
         //convert the text content into a string
         articleString = extract;
 
-        //display the original article content on the page in the Original tab
+        //display the articles
+        $('#nothing-here').css('display','none')
+
+        $('#right-div').css('display','flex')
         $('#article').css('visibility','visible')
         $('#wiki-title').text(title)
         $("#wiki-content").text(extract)
@@ -306,7 +320,11 @@ function wikiSearch() {
         $('#tts button').css('visibility','visible')
 
         $('#right-header').css('justify-content','space-between')
-        $('#spacer').css('display','block')
+        if ($(window).width() > 768) {
+            $('#spacer').css('display','block')
+        // } else {
+        //     $('.left-div-mobile').css('display','none')
+        }
         $('#article-buttons').css('display','block')
         $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
         $('#og-wiki').css('opacity','100%').css('background','transparent')
@@ -318,6 +336,7 @@ function wikiSearch() {
         wordAPI(articleString)
 
         //save OG article to local storage
+        localStorage.setItem("input", JSON.stringify(input));
         localStorage.setItem("title", JSON.stringify(title));
         localStorage.setItem("original", JSON.stringify(articleString));
 
@@ -518,11 +537,9 @@ function speak(){
         synth.cancel()
         $('.vampi-mouth').css('animation','none')
         $('#play').text("🔊 Let's Hear It!")
-        /*$('#tts:hover').css('visibility','visible')/*TODO - permanently stays visible, which we dont want*/
  
     } else if (article.trim() !== '') {
         $('#play').text("🔇 Stop!")
-        // $('#tts:hover').css('visibility','hidden')
         var utterThis = new SpeechSynthesisUtterance(article);
         utterThis.onend = function (event) {
             console.log('SpeechSynthesisUtterance.onend');
@@ -545,7 +562,6 @@ function speak(){
             if (!synth.speaking) {
                 $('.vampi-mouth').css('animation','none')
                 $('#play').text("🔊 Let's Hear It!")
-                /*$('#tts:hover').css('visibility','visible')*/
             }
         }, 100);
     }
@@ -554,8 +570,6 @@ function speak(){
 $('#play').click(function() {
     speak()
 })
-
-
 
 /*-------------------------WACKY WILFRED-------------------------*/
 let ufo = document.querySelector('body');
@@ -614,22 +628,38 @@ $("#load").on("click",function(){
 
 function loadWacky(){
 
+    var input = JSON.parse(localStorage.getItem("input"))
+    var title = JSON.parse(localStorage.getItem("title"))
     var wacky = JSON.parse(localStorage.getItem("wacky"))
     var original = JSON.parse(localStorage.getItem("original"))
 
-    if (wacky != null && original != null){
+    if (wacky != null && original != null) {
+        $('#nothing-here').css('display','none')
+
+        $('#article-input').val(input)
+        $('#wiki-title').html(title)
         $('#wacky-content').html(wacky)
         $('#wiki-content').text(original)
+        $('#right-div').css('display','flex')
         $('#article').css('visibility','visible')
         $('#tts button').css('visibility','visible')
         $('#right-header').css('justify-content','space-between')
-        $('#spacer').css('display','block')
+        if ($(window).width() > 768) {
+            $('#spacer').css('display','block')
+        }
         $('#article-buttons').css('display','block')
         $('#wackified-wiki').css('opacity','75%').css('background','rgba(255, 245, 238, 0.25)')
         $('#og-wiki').css('opacity','100%').css('background','transparent')
         $("#wacky-content").css('display','block')
         $("#wiki-content").css('display','none')
+        $("#topic-warning").empty();
+        $("#noun-warning").empty();
+        $("#adjective-warning").empty();
+        $("#adverb-warning").empty();
+        $("#verb-warning").empty();
         isWackified = true;
+
+        check()
     } 
 }
 
@@ -646,3 +676,13 @@ function pullStorage(input,stored,id){
         }       
     } 
 }
+
+
+
+$(window).on('resize', function() {
+    if ($(window).width() < 768 || $("#wiki-content").text().trim() === '') {
+        $('#spacer').css('display','none')
+    } else {
+        $('#spacer').css('display','block')
+    }
+})
