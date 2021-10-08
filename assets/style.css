@@ -44,12 +44,6 @@ span {
   font-weight: bolder;
 }
 
-/* styling of replaced words */
-span {
-    color: salmon;
-    font-size: large;
-}
-
 /*-------------------------LEFT DIV-------------------------*/
 #left-div {
   display: flex;
@@ -160,7 +154,15 @@ path {
   z-index: 2;
   width: 100%;
 }
-
+#back {
+  display: none;
+  height: 25px;
+  padding: 4px;
+  background: purple;
+  border-bottom-right-radius: 8px;
+  opacity: 75%;
+  z-index: 2;
+}
 #right-header {
   margin: 0 30px 20px 0;
   display: flex;
@@ -169,13 +171,13 @@ path {
 #spacer {/*to align right title to center*/
   display: none;
   width: 8vw;
-  background-color: black;/*TODO - delet*/
 }
-#right-title {/*TODO - prevent text from wrapping*/
+#right-title {
   height: 100px;
   padding: 10px;
   text-align: center;
   font-size: 3vw;
+  white-space: nowrap;
 }
 #article-buttons {
   display: none;
@@ -210,6 +212,11 @@ path {
 #wiki-title {
 /* text-decoration: underline; */
 padding-bottom: 10px;
+}
+#nothing-here {
+  text-align: center;
+  font-size: large;
+  opacity: 60%;
 }
 #tts {
   visibility: hidden;
@@ -514,45 +521,75 @@ padding-bottom: 10px;
 
 /*-------------------------FOR MOBILE-------------------------*/
 @media screen and (max-width: 768px) {
-
+  body {
+    overflow:auto;
+  }
   main {
-    /* display: block; */
     flex-direction: column;
     align-content: center;
   }
   #left-div {
+    z-index: 0;
     width: 100%;
     max-width: 100%;
     min-width: 100%;
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
     border-right: none;
-    box-shadow: none;
-    overflow-y: none;/*not individual scroll*/
   }
   #form-buttons {
     margin-right: 120px;
+    min-width: 300px;
   }
   #collapse {
     display: none;
   }
-  /* #right-div {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    overflow-y: auto;
-    z-index: 2;
-    width: 100%;
-  } */
+  #right-div {
+    height: 100%;
+    min-height: 100vh;
+  }
+  #back {
+    display: block;
+  }
+  #right-header {
+    text-align: center;
+    margin: 30px 0 20px 0;
+    justify-content: center;
+    align-self: center;
+  }
   #spacer {
-    display: none;/*TODO - not working*/
+    display: none!important;
   }
   #right-title {
     display: none;
   }
 
+  #article {
+    margin-right: 3vw;
+    margin-left: 3vw;
+  }
+  #article-buttons {
+    right: auto;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  #tts {
+    padding: 24px;
+    visibility: visible;
+  }
   .monster {
     position: fixed;
   }
-
+  .box h1 {
+    font-size: 28px;
+  }
+  .box p {
+    font-size: 20px;
+  }
+  .box h2 {
+    font-size: 20px;
+  }
+  .box ol {
+    font-size: 17px;
+  }
 }
