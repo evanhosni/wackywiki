@@ -30,6 +30,15 @@ Credits
 
 - [David Siegmann](https://github.com/DavidSiegmann) - Junior Researcher/Comedic Relief
 
+
+## Mock-Up
+
+Images of the appearance of the website:
+
+<img src="./assets/images/wackywiki1.jpg"> <br>
+<img src="./assets/images/wackywiki2.jpg"> <br>
+<img src="./assets/images/wackywiki3.jpg">
+
 Resources
 =
 - [Wikipedia API](https://en.wikipedia.org/wiki/Wikipedia:API)
