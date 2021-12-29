@@ -2,12 +2,12 @@
 
 Woohoo! **WackyWiki**
 =======
-Visit [HERE](https://evanhosni.github.io/wackywiki/ "Website for the WackyWiki Project") to start ~~getting~~ **[Verb]** **WACKY**.
+Visit [HERE](https://evanhosni.github.io/wackywiki/ "Website for the WackyWiki Project") to get wacky!
 
 
- Most ~~Awesomest~~ **[Adjective]** spin on the classic 90's nostalgic roadtrip banger.. MadLibz
+ Most **[Adjective]** spin on the classic 90's nostalgic roadtrip banger.. MadLibz
 ==
-**WackyWiki** is a very user friendly online version of ~~MadLibz~~ **[Noun]** that allows you to select any topic from Wikipedia and input how ever many and whatever zany nouns, adjectives, verbs, and adverbs you would like, to randomly replace words in the article.
+**WackyWiki** is a user friendly online version of MadLibz that allows you to select any topic from Wikipedia and input how ever many and whatever zany nouns, adjectives, verbs, and adverbs you would like, to randomly replace words in the article.
 
 
 Boring parts
@@ -17,7 +17,7 @@ The `code` is here on github.
 
 **Awesome** parts
 ===
-THE WHOLE ~~&@$#ING*~~ **[Expletive]** THING!!
+THE WHOLE **[Expletive]** THING!!
 
 Credits
 ==
